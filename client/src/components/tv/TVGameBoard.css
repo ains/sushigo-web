@@ -32,6 +32,18 @@
   font-weight: 600;
 }
 
+.tv-game-board .player-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tv-game-board .round-points {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
 .tv-game-board .player-ready {
   font-size: 14px;
   color: var(--text-muted);
@@ -57,4 +69,54 @@
 .tv-game-board .no-cards {
   color: var(--text-muted);
   font-style: italic;
+}
+
+/* Card group styles */
+.tv-game-board .card-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--surface-light);
+  gap: 4px;
+}
+
+.tv-game-board .card-group-cards {
+  display: flex;
+  gap: 4px;
+}
+
+.tv-game-board .card-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--secondary);
+  padding: 2px 8px;
+  background: var(--surface);
+  border-radius: 8px;
+}
+
+/* Complete sets get a highlight */
+.tv-game-board .card-group-tempura_set,
+.tv-game-board .card-group-sashimi_set {
+  background: linear-gradient(135deg, var(--surface-light), rgba(76, 175, 80, 0.15));
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+/* Wasabi-nigiri combo */
+.tv-game-board .card-group-wasabi_nigiri {
+  background: linear-gradient(135deg, var(--surface-light), rgba(255, 193, 7, 0.15));
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* Incomplete sets are slightly faded */
+.tv-game-board .card-group.incomplete {
+  opacity: 0.7;
+  border: 1px dashed var(--text-muted);
+}
+
+/* Unused wasabi */
+.tv-game-board .card-group.unused {
+  opacity: 0.6;
+  border: 1px dashed var(--text-muted);
 }

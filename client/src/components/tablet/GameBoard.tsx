@@ -1,5 +1,7 @@
 import { PublicPlayer } from '../../types';
 import { Card } from '../shared/Card';
+import { calculateRoundPoints } from '../../utils/scoring';
+import { groupPlayedCards, CardGroup } from '../../utils/cardGrouping';
 import './GameBoard.css';
 
 interface GameBoardProps {
@@ -12,20 +14,43 @@ interface PlayerBoardProps {
   currentRound: number;
 }
 
+function CardGroupDisplay({ group }: { group: CardGroup }) {
+  const isIncomplete = group.type === 'incomplete_tempura' || group.type === 'incomplete_sashimi';
+  const isUnused = group.type === 'unused_wasabi';
+
+  return (
+    <div className={`card-group card-group-${group.type} ${isIncomplete ? 'incomplete' : ''} ${isUnused ? 'unused' : ''}`}>
+      <div className="card-group-cards">
+        {group.cards.map(card => (
+          <Card key={card.id} card={card} size="small" showPoints={false} />
+        ))}
+      </div>
+      {group.label && <div className="card-group-label">{group.label}</div>}
+    </div>
+  );
+}
+
 function PlayerBoard({ player, currentRound }: PlayerBoardProps) {
+  const roundCards = player.playedCards[currentRound - 1] || [];
+  const roundPoints = calculateRoundPoints(roundCards);
+  const cardGroups = groupPlayedCards(roundCards);
+
   return (
     <div className="player-board">
       <div className="player-header">
         <span className="player-name">{player.name}</span>
-        <span className={`player-ready ${player.hasConfirmed ? 'confirmed' : ''}`}>
-          {player.hasConfirmed ? '✓ Ready' : `${player.handSize} cards`}
-        </span>
+        <div className="player-status">
+          <span className="round-points">{roundPoints} pts</span>
+          <span className={`player-ready ${player.hasConfirmed ? 'confirmed' : ''}`}>
+            {player.hasConfirmed ? '✓ Ready' : `${player.handSize} cards`}
+          </span>
+        </div>
       </div>
       <div className="played-cards">
-        {player.playedCards[currentRound - 1]?.map(card => (
-          <Card key={card.id} card={card} size="small" showPoints={false} />
+        {cardGroups.map((group, index) => (
+          <CardGroupDisplay key={`${group.type}-${index}`} group={group} />
         ))}
-        {(!player.playedCards[currentRound - 1] || player.playedCards[currentRound - 1].length === 0) && (
+        {cardGroups.length === 0 && (
           <div className="no-cards">No cards played yet</div>
         )}
       </div>
