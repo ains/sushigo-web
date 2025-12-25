@@ -1,0 +1,81 @@
+.game-board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Each side of the table */
+.table-side {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  padding: 16px;
+}
+
+/* Top side - rotated 180° for opposing players */
+.top-side {
+  transform: rotate(180deg);
+}
+
+/* Center divider between the two sides */
+.table-divider {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--surface-light), var(--primary), var(--surface-light), transparent);
+  margin: 0 40px;
+  border-radius: 2px;
+}
+
+/* Individual player board */
+.player-board {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--surface-light);
+}
+
+.player-header .player-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.player-ready {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  background: var(--surface-light);
+  border-radius: 12px;
+}
+
+.player-ready.confirmed {
+  background: var(--secondary);
+  color: white;
+}
+
+.played-cards {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+  overflow-y: auto;
+}
+
+.no-cards {
+  color: var(--text-muted);
+  font-style: italic;
+}

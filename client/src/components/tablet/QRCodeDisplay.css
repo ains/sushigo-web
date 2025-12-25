@@ -1,0 +1,52 @@
+.qr-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.qr-code-wrapper {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.join-info {
+  text-align: center;
+}
+
+.scan-text {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.game-code {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.code-label {
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+.code-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--primary);
+  letter-spacing: 4px;
+  background: var(--surface);
+  padding: 8px 20px;
+  border-radius: 8px;
+}
+
+.url-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  word-break: break-all;
+}

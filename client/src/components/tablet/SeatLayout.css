@@ -1,0 +1,82 @@
+.seat-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  flex: 1;
+}
+
+.table-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.top-row {
+  transform: rotate(180deg);
+}
+
+.seat {
+  width: 180px;
+  height: 100px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.seat.empty {
+  background: var(--surface);
+  border: 3px dashed var(--surface-light);
+}
+
+.seat.occupied {
+  background: var(--surface);
+  border: 3px solid var(--secondary);
+}
+
+.seat-number {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.seat-waiting {
+  font-size: 14px;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.seat-player-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.seat-status {
+  font-size: 14px;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+.table-surface {
+  flex: 1;
+  min-height: 120px;
+  background: linear-gradient(135deg, #2d1f1a, #3d2f2a);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #4a3830;
+  margin: 0 40px;
+}
+
+.table-label {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6a5850;
+  letter-spacing: 8px;
+}

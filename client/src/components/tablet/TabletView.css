@@ -1,0 +1,184 @@
+.tablet-view {
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tablet-view h1 {
+  text-align: center;
+  font-size: 48px;
+  margin-bottom: 0;
+  color: var(--primary);
+}
+
+/* Lobby styles */
+.lobby-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.lobby-status {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.lobby .lobby-content {
+  display: flex;
+  flex: 1;
+  gap: 40px;
+}
+
+.lobby .qr-section {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+}
+
+.lobby .seats-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.unseated-players {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.unseated-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.unseated-player {
+  background: var(--warning);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.unseated-player:last-child {
+  margin-bottom: 0;
+}
+
+.start-btn {
+  margin-top: 20px;
+}
+
+/* Playing styles */
+.playing {
+  gap: 16px;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Round end overlay */
+.round-end-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.round-end-overlay h2 {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.round-end-overlay p {
+  font-size: 24px;
+  color: var(--text-muted);
+}
+
+/* Game end styles */
+.game-end {
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.winner-announcement {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.winner-emoji {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.winner-announcement h2 {
+  font-size: 36px;
+  color: var(--secondary);
+}
+
+.final-scores {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 400px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.score-row.winner {
+  background: rgba(46, 204, 113, 0.2);
+}
+
+.score-row .rank {
+  width: 32px;
+  height: 32px;
+  background: var(--surface-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.score-row.winner .rank {
+  background: var(--secondary);
+}
+
+.score-row .name {
+  flex: 1;
+  font-size: 18px;
+}
+
+.score-row .puddings {
+  color: var(--text-muted);
+}
+
+.score-row .score {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 80px;
+  text-align: right;
+}

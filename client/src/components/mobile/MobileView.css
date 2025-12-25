@@ -1,0 +1,137 @@
+.mobile-view {
+  min-height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-view h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+/* Lobby styles */
+.mobile-view.lobby {
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-view.lobby h1 {
+  color: var(--secondary);
+}
+
+.player-info {
+  background: var(--surface);
+  padding: 20px 32px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.player-info .player-name {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.player-info .player-status {
+  color: var(--secondary);
+  font-size: 14px;
+}
+
+.waiting-message {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.waiting-message p {
+  margin-bottom: 8px;
+}
+
+.player-count {
+  font-size: 18px;
+  color: var(--text);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--surface-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Round end styles */
+.mobile-view.round-end {
+  align-items: center;
+  justify-content: center;
+}
+
+.my-score {
+  background: var(--surface);
+  padding: 24px 48px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.score-label {
+  display: block;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.score-value {
+  display: block;
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--secondary);
+}
+
+.pudding-count {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-muted);
+}
+
+.waiting-text {
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Game end styles */
+.mobile-view.game-end {
+  align-items: center;
+  justify-content: center;
+}
+
+.result-banner {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.result-banner .emoji {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.result-banner h1 {
+  font-size: 32px;
+  margin-bottom: 0;
+}
+
+.result-banner.winner h1 {
+  color: var(--secondary);
+}
