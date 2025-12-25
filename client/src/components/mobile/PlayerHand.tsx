@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import { Card } from '../shared/Card';
 import './PlayerHand.css';
 
 export function PlayerHand() {
   const { hand, selectedCards, toggleCardSelection, confirmSelection, gameState, myPlayerId } = useGame();
+  const [isPassingCards, setIsPassingCards] = useState(false);
+  const [passDirection, setPassDirection] = useState<'left' | 'right'>('right');
 
   const players = gameState?.players || [];
   const myIndex = players.findIndex(p => p.id === myPlayerId);
@@ -33,7 +36,25 @@ export function PlayerHand() {
   const passToPlayer = players[passToIndex];
   const receiveFromPlayer = players[receiveFromIndex];
 
-  const canConfirm = selectedCards.length > 0;
+  const canConfirm = selectedCards.length > 0 && !isPassingCards;
+
+  const handleConfirm = () => {
+    if (!canConfirm) return;
+
+    // Set the pass direction for animation
+    // Clockwise = cards fly right, Counter-clockwise = cards fly left
+    setPassDirection(isClockwise ? 'right' : 'left');
+    setIsPassingCards(true);
+
+    // Wait for animation to complete before confirming
+    setTimeout(() => {
+      confirmSelection();
+      // Reset animation state after a short delay (hand will be replaced by server)
+      setTimeout(() => {
+        setIsPassingCards(false);
+      }, 100);
+    }, 400); // Match animation duration
+  };
 
   return (
     <div className="player-hand">
@@ -67,28 +88,40 @@ export function PlayerHand() {
       </div>
 
       <div className="cards-container">
-        {hand.map(card => (
-          <Card
-            key={card.id}
-            card={card}
-            size="large"
-            selected={selectedCards.includes(card.id)}
-            onClick={() => toggleCardSelection(card.id)}
-          />
-        ))}
+        {hand.map(card => {
+          const isSelected = selectedCards.includes(card.id);
+          const shouldFlyOff = isPassingCards && !isSelected;
+
+          return (
+            <div
+              key={card.id}
+              className={`card-wrapper ${shouldFlyOff ? `flying-${passDirection}` : ''} ${isSelected && isPassingCards ? 'playing' : ''}`}
+            >
+              <Card
+                card={card}
+                size="large"
+                selected={isSelected}
+                onClick={() => !isPassingCards && toggleCardSelection(card.id)}
+                disabled={isPassingCards}
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="confirm-section">
         <button
           className="btn btn-success btn-large confirm-btn"
           disabled={!canConfirm}
-          onClick={confirmSelection}
+          onClick={handleConfirm}
         >
-          {selectedCards.length === 0
-            ? 'Select a card'
-            : selectedCards.length === 1
-              ? 'Play Card'
-              : 'Play 2 Cards'}
+          {isPassingCards
+            ? 'Passing cards...'
+            : selectedCards.length === 0
+              ? 'Select a card'
+              : selectedCards.length === 1
+                ? 'Play Card'
+                : 'Play 2 Cards'}
         </button>
       </div>
     </div>

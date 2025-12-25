@@ -95,3 +95,71 @@
 .confirm-btn:disabled {
   background: var(--surface-light);
 }
+
+/* Card wrapper for animations */
+.card-wrapper {
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+/* Flying animation for cards being passed */
+@keyframes flyRight {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150vw) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flyLeft {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-150vw) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+/* Playing animation for selected card */
+@keyframes playCard {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1) translateY(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) translateY(-50px);
+    opacity: 0;
+  }
+}
+
+.card-wrapper.flying-right {
+  animation: flyRight 0.4s ease-in forwards;
+}
+
+.card-wrapper.flying-left {
+  animation: flyLeft 0.4s ease-in forwards;
+}
+
+.card-wrapper.playing {
+  animation: playCard 0.4s ease-out forwards;
+}
+
+/* Stagger the animation for each card */
+.card-wrapper:nth-child(1) { animation-delay: 0ms; }
+.card-wrapper:nth-child(2) { animation-delay: 30ms; }
+.card-wrapper:nth-child(3) { animation-delay: 60ms; }
+.card-wrapper:nth-child(4) { animation-delay: 90ms; }
+.card-wrapper:nth-child(5) { animation-delay: 120ms; }
+.card-wrapper:nth-child(6) { animation-delay: 150ms; }
+.card-wrapper:nth-child(7) { animation-delay: 180ms; }
+.card-wrapper:nth-child(8) { animation-delay: 210ms; }
+.card-wrapper:nth-child(9) { animation-delay: 240ms; }
+.card-wrapper:nth-child(10) { animation-delay: 270ms; }
