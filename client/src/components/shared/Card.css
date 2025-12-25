@@ -48,6 +48,25 @@
 
 .card-emoji {
   margin-bottom: 4px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Scale down multi-emoji cards like maki3 */
+.card-maki3 .card-emoji {
+  font-size: 0.5em;
+}
+
+.card-small.card-maki3 .card-emoji {
+  font-size: 12px;
+}
+
+.card-medium.card-maki3 .card-emoji {
+  font-size: 18px;
+}
+
+.card-large.card-maki3 .card-emoji {
+  font-size: 24px;
 }
 
 .card-name {
