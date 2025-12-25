@@ -1,0 +1,60 @@
+.tv-game-board {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+/* Individual player board */
+.tv-game-board .player-board {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tv-game-board .player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--surface-light);
+}
+
+.tv-game-board .player-header .player-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.tv-game-board .player-ready {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  background: var(--surface-light);
+  border-radius: 12px;
+}
+
+.tv-game-board .player-ready.confirmed {
+  background: var(--secondary);
+  color: white;
+}
+
+.tv-game-board .played-cards {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+  overflow-y: auto;
+}
+
+.tv-game-board .no-cards {
+  color: var(--text-muted);
+  font-style: italic;
+}

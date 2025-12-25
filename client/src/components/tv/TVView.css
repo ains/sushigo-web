@@ -1,0 +1,184 @@
+.tv-view {
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tv-view h1 {
+  text-align: center;
+  font-size: 48px;
+  margin-bottom: 0;
+  color: var(--primary);
+}
+
+/* Lobby styles */
+.tv-view .lobby-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.tv-view .lobby-status {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.tv-view.lobby .lobby-content {
+  display: flex;
+  flex: 1;
+  gap: 40px;
+}
+
+.tv-view.lobby .qr-section {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+}
+
+.tv-view.lobby .seats-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tv-view .unseated-players {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.tv-view .unseated-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.tv-view .unseated-player {
+  background: var(--warning);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.tv-view .unseated-player:last-child {
+  margin-bottom: 0;
+}
+
+.tv-view .start-btn {
+  margin-top: 20px;
+}
+
+/* Playing styles */
+.tv-view.playing {
+  gap: 16px;
+}
+
+.tv-view .game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Round end overlay */
+.tv-view .round-end-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.tv-view .round-end-overlay h2 {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.tv-view .round-end-overlay p {
+  font-size: 24px;
+  color: var(--text-muted);
+}
+
+/* Game end styles */
+.tv-view.game-end {
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.tv-view .winner-announcement {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tv-view .winner-emoji {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.tv-view .winner-announcement h2 {
+  font-size: 36px;
+  color: var(--secondary);
+}
+
+.tv-view .final-scores {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 400px;
+}
+
+.tv-view .score-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.tv-view .score-row.winner {
+  background: rgba(46, 204, 113, 0.2);
+}
+
+.tv-view .score-row .rank {
+  width: 32px;
+  height: 32px;
+  background: var(--surface-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.tv-view .score-row.winner .rank {
+  background: var(--secondary);
+}
+
+.tv-view .score-row .name {
+  flex: 1;
+  font-size: 18px;
+}
+
+.tv-view .score-row .puddings {
+  color: var(--text-muted);
+}
+
+.tv-view .score-row .score {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 80px;
+  text-align: right;
+}
