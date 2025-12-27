@@ -78,6 +78,7 @@ export interface ServerToClientEvents {
   'game:end': (data: {
     finalScores: { playerId: string; totalScore: number; puddings: number }[];
     winner: string;
+    gameState: PublicGameState;
   }) => void;
   'state:update': (data: { gameState: PublicGameState }) => void;
 }

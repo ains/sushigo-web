@@ -312,68 +312,9 @@
 }
 
 .round-end-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.round-end-content {
-  background: var(--surface);
-  padding: 32px;
-  border-radius: 16px;
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-
-.round-end-content h2 {
-  margin-bottom: 24px;
-  color: var(--secondary);
-}
-
-.round-scores {
-  margin-bottom: 24px;
-}
-
-.score-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--background);
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-
-.score-row .rank {
-  font-weight: bold;
-  color: var(--text-muted);
-  width: 30px;
-}
-
-.score-row .name {
   flex: 1;
-  text-align: left;
-}
-
-.score-row .round-score {
-  color: var(--secondary);
-  font-weight: 500;
-}
-
-.score-row .total-score {
-  font-weight: bold;
-  min-width: 60px;
-  text-align: right;
-}
-
-.next-round-hint {
-  color: var(--text-muted);
-  font-style: italic;
+  overflow-y: auto;
+  background: var(--background);
 }
 
 /* Responsive adjustments */

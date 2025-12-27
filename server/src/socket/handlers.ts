@@ -239,6 +239,7 @@ export function setupSocketHandlers(io: GameServer): void {
           io.to(game.id).emit('game:end', {
             finalScores,
             winner,
+            gameState: game.getPublicState(),
           });
         }
       }

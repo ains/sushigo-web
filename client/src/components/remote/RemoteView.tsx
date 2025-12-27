@@ -4,12 +4,12 @@ import { RemoteJoin } from './RemoteJoin';
 import { RemoteLobby } from './RemoteLobby';
 import { RemoteGamePlay } from './RemoteGamePlay';
 import { TVGameEnd } from '../tv/TVGameEnd';
-import { TVGameBoard } from '../tv/TVGameBoard';
+import { RoundScoreBreakdown } from '../mobile/RoundScoreBreakdown';
 import './RemoteView.css';
 
 export function RemoteView() {
   const { code } = useParams<{ code?: string }>();
-  const { gameState, myPlayerId, isHost, restartGame, roundScores } = useGame();
+  const { gameState, myPlayerId, isHost, restartGame } = useGame();
 
   const phase = gameState?.phase;
   const players = gameState?.players || [];
@@ -29,40 +29,20 @@ export function RemoteView() {
     return <RemoteLobby />;
   }
 
-  // Round end - show board with scores overlay
+  // Round end - show score breakdown for current player
   if (phase === 'round_end') {
+    const myPlayer = players.find((p) => p.id === myPlayerId);
+
     return (
       <div className="remote-gameplay round-end">
-        <div className="board-section">
-          <TVGameBoard
-            players={players}
-            currentRound={gameState.currentRound}
-            currentTurn={gameState.currentTurn}
-            phase={gameState.phase}
-          />
-        </div>
         <div className="round-end-overlay">
-          <div className="round-end-content">
-            <h2>Round {gameState.currentRound} Complete!</h2>
-            {roundScores && (
-              <div className="round-scores">
-                {roundScores
-                  .sort((a, b) => b.totalScore - a.totalScore)
-                  .map((score, index) => {
-                    const player = players.find((p) => p.id === score.playerId);
-                    return (
-                      <div key={score.playerId} className="score-row">
-                        <span className="rank">#{index + 1}</span>
-                        <span className="name">{player?.name}</span>
-                        <span className="round-score">+{score.roundScore}</span>
-                        <span className="total-score">{score.totalScore} pts</span>
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-            <p className="next-round-hint">Next round starting soon...</p>
-          </div>
+          {myPlayer && (
+            <RoundScoreBreakdown
+              player={myPlayer}
+              allPlayers={players}
+              currentRound={gameState.currentRound}
+            />
+          )}
         </div>
       </div>
     );

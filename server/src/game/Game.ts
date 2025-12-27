@@ -338,9 +338,17 @@ export class Game {
   // Get round scores for display
   getRoundScores(): { playerId: string; roundScore: number; totalScore: number }[] {
     const round = this.state.currentRound;
+
+    // Calculate maki scores for this round
+    const makiData: PlayerMakiData[] = this.state.players.map((p) => ({
+      id: p.id,
+      roundCards: p.playedCards[round - 1] || [],
+    }));
+    const makiScores = scoreMakiForPlayers(makiData);
+
     return this.state.players.map((p) => ({
       playerId: p.id,
-      roundScore: scoreRoundCards(p.playedCards[round - 1] || []),
+      roundScore: scoreRoundCards(p.playedCards[round - 1] || []) + (makiScores.get(p.id) || 0),
       totalScore: p.score,
     }));
   }

@@ -161,9 +161,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setGameState(state);
     });
 
-    newSocket.on('game:end', ({ finalScores: scores, winner: winnerId }) => {
+    newSocket.on('game:end', ({ finalScores: scores, winner: winnerId, gameState: state }) => {
       setFinalScores(scores);
       setWinner(winnerId);
+      setGameState(state);
     });
 
     newSocket.on('state:update', ({ gameState: state }) => {
