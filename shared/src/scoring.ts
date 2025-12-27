@@ -94,85 +94,6 @@ export function scoreRoundCards(cards: Card[]): number {
   return score;
 }
 
-// Score maki for all players (comparative scoring)
-export function scoreMakiForPlayers(players: PlayerMakiData[]): Map<string, number> {
-  const scores = new Map<string, number>();
-
-  // Count maki for each player
-  const makiCounts: { playerId: string; count: number }[] = players.map(p => ({
-    playerId: p.id,
-    count: countMaki(p.roundCards)
-  }));
-
-  // Sort by count descending
-  makiCounts.sort((a, b) => b.count - a.count);
-
-  // Find 1st place (players with most maki)
-  const firstPlaceCount = makiCounts[0]?.count || 0;
-  if (firstPlaceCount === 0) {
-    // No one has maki
-    return scores;
-  }
-
-  const firstPlacePlayers = makiCounts.filter(p => p.count === firstPlaceCount);
-
-  if (firstPlacePlayers.length === 1) {
-    // Single winner gets 6 points
-    scores.set(firstPlacePlayers[0].playerId, 6);
-
-    // Find 2nd place
-    const secondPlaceCount = makiCounts.find(p => p.count < firstPlaceCount)?.count || 0;
-    if (secondPlaceCount > 0) {
-      const secondPlacePlayers = makiCounts.filter(p => p.count === secondPlaceCount);
-      const secondPlacePoints = Math.floor(3 / secondPlacePlayers.length);
-      for (const player of secondPlacePlayers) {
-        scores.set(player.playerId, secondPlacePoints);
-      }
-    }
-  } else {
-    // Tie for first - split 6 points
-    const pointsPerPlayer = Math.floor(6 / firstPlacePlayers.length);
-    for (const player of firstPlacePlayers) {
-      scores.set(player.playerId, pointsPerPlayer);
-    }
-    // No second place points awarded when there's a tie for first
-  }
-
-  return scores;
-}
-
-// Score puddings at end of game (comparative scoring)
-export function scorePuddingsForPlayers(players: PlayerPuddingData[]): Map<string, number> {
-  const scores = new Map<string, number>();
-
-  if (players.length === 0) return scores;
-
-  // Find most and least puddings
-  const puddingCounts = players.map(p => p.puddings);
-  const maxPuddings = Math.max(...puddingCounts);
-  const minPuddings = Math.min(...puddingCounts);
-
-  // Most puddings: +6 points (split if tied)
-  const mostPuddingPlayers = players.filter(p => p.puddings === maxPuddings);
-  const mostPoints = Math.floor(6 / mostPuddingPlayers.length);
-  for (const player of mostPuddingPlayers) {
-    scores.set(player.id, mostPoints);
-  }
-
-  // Least puddings: -6 points (split if tied)
-  // In 2-player game, no one loses points for least puddings
-  if (players.length > 2 && minPuddings !== maxPuddings) {
-    const leastPuddingPlayers = players.filter(p => p.puddings === minPuddings);
-    const leastPoints = Math.floor(-6 / leastPuddingPlayers.length);
-    for (const player of leastPuddingPlayers) {
-      const current = scores.get(player.id) || 0;
-      scores.set(player.id, current + leastPoints);
-    }
-  }
-
-  return scores;
-}
-
 // Calculate a single player's maki bonus given all players' maki counts
 export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[]): number {
   if (playerMaki === 0) return 0;
@@ -201,6 +122,21 @@ export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[])
   return 0;
 }
 
+// Score maki for all players (comparative scoring)
+export function scoreMakiForPlayers(players: PlayerMakiData[]): Map<string, number> {
+  const scores = new Map<string, number>();
+  const allMakiCounts = players.map(p => countMaki(p.roundCards));
+
+  for (let i = 0; i < players.length; i++) {
+    const bonus = calculateMakiBonus(allMakiCounts[i], allMakiCounts);
+    if (bonus > 0) {
+      scores.set(players[i].id, bonus);
+    }
+  }
+
+  return scores;
+}
+
 // Calculate a single player's pudding bonus given all players' pudding counts
 export function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings: number[]): number {
   if (allPlayerPuddings.length === 0) return 0;
@@ -224,4 +160,21 @@ export function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings:
   }
 
   return bonus;
+}
+
+// Score puddings at end of game (comparative scoring)
+export function scorePuddingsForPlayers(players: PlayerPuddingData[]): Map<string, number> {
+  const scores = new Map<string, number>();
+  if (players.length === 0) return scores;
+
+  const allPuddingCounts = players.map(p => p.puddings);
+
+  for (const player of players) {
+    const bonus = calculatePuddingBonus(player.puddings, allPuddingCounts);
+    if (bonus !== 0) {
+      scores.set(player.id, bonus);
+    }
+  }
+
+  return scores;
 }
