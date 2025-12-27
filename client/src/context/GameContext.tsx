@@ -40,6 +40,7 @@ interface GameContextType {
   // Actions
   createGame: () => void;
   joinGame: (code: string, name: string) => void;
+  spectateGame: (code: string) => void;
   startGame: () => void;
   selectSeat: (seatIndex: number) => void;
   selectCards: (cardIds: string[]) => void;
@@ -175,6 +176,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [socket]
   );
 
+  const spectateGame = useCallback(
+    (code: string) => {
+      socket?.emit('game:spectate', { code });
+      setGameCode(code.toUpperCase());
+    },
+    [socket]
+  );
+
   const startGame = useCallback(() => {
     socket?.emit('game:start');
   }, [socket]);
@@ -264,6 +273,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         winner,
         createGame,
         joinGame,
+        spectateGame,
         startGame,
         selectSeat,
         selectCards,

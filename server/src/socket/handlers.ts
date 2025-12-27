@@ -56,6 +56,26 @@ export function setupSocketHandlers(io: GameServer): void {
       console.log(`Player ${name} joined game ${game.code}`);
     });
 
+    // Spectate an existing game (view only)
+    socket.on('game:spectate', ({ code }) => {
+      const game = gameManager.getGameByCode(code);
+
+      if (!game) {
+        socket.emit('game:error', { message: 'Game not found' });
+        return;
+      }
+
+      // Join room to receive updates, but don't add as player
+      socket.join(game.id);
+
+      // Send current game state
+      socket.emit('state:update', {
+        gameState: game.getPublicState(),
+      });
+
+      console.log(`Spectator joined game ${game.code}`);
+    });
+
     // Player selects a seat
     socket.on('seat:select', ({ seatIndex }) => {
       const game = gameManager.getGameBySocket(socket.id);

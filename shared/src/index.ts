@@ -80,6 +80,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   'game:create': () => void;
   'game:join': (data: { code: string; name: string }) => void;
+  'game:spectate': (data: { code: string }) => void;
   'game:start': () => void;
   'seat:select': (data: { seatIndex: number }) => void;
   'card:select': (data: { cardIds: string[] }) => void;
