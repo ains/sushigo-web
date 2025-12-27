@@ -1,14 +1,7 @@
-import { Card as CardType, PublicPlayer } from "../../types";
+import { PublicPlayer } from "../../types";
 import { Card } from "../shared/Card";
-import { countMaki, DUMPLING_POINTS, NIGIRI_VALUES } from "sushigo-shared";
+import { countMaki, calculateScoreBreakdown, calculateMakiBonus } from "sushigo-shared";
 import "./RoundScoreBreakdown.css";
-
-interface ScoreItem {
-  label: string;
-  cards: CardType[];
-  points: number;
-  description?: string;
-}
 
 interface RoundScoreBreakdownProps {
   player: PublicPlayer;
@@ -27,197 +20,14 @@ function calculateMakiRankings(
   players: PublicPlayer[],
   roundIndex: number
 ): MakiRanking[] {
-  const playerMakis = players.map((p) => ({
+  const allMakiCounts = players.map(p => countMaki(p.playedCards[roundIndex] || []));
+
+  return players.map((p, i) => ({
     playerId: p.id,
     playerName: p.name,
-    makiCount: countMaki(p.playedCards[roundIndex] || []),
-    points: 0,
+    makiCount: allMakiCounts[i],
+    points: calculateMakiBonus(allMakiCounts[i], allMakiCounts),
   }));
-
-  // Sort by maki count descending
-  const sorted = [...playerMakis].sort((a, b) => b.makiCount - a.makiCount);
-
-  if (sorted.length === 0 || sorted[0].makiCount === 0) {
-    return playerMakis;
-  }
-
-  const highest = sorted[0].makiCount;
-  const firstPlacePlayers = sorted.filter((p) => p.makiCount === highest);
-
-  // Award 6 points split among first place
-  const firstPlacePoints = Math.floor(6 / firstPlacePlayers.length);
-  firstPlacePlayers.forEach((p) => {
-    const player = playerMakis.find((pm) => pm.playerId === p.playerId);
-    if (player) player.points = firstPlacePoints;
-  });
-
-  // If there's only one first place winner, award second place
-  if (firstPlacePlayers.length === 1) {
-    const remaining = sorted.filter(
-      (p) => p.makiCount < highest && p.makiCount > 0
-    );
-    if (remaining.length > 0) {
-      const secondHighest = remaining[0].makiCount;
-      const secondPlacePlayers = remaining.filter(
-        (p) => p.makiCount === secondHighest
-      );
-      const secondPlacePoints = Math.floor(3 / secondPlacePlayers.length);
-      secondPlacePlayers.forEach((p) => {
-        const player = playerMakis.find((pm) => pm.playerId === p.playerId);
-        if (player) player.points = secondPlacePoints;
-      });
-    }
-  }
-
-  return playerMakis;
-}
-
-function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
-  const items: ScoreItem[] = [];
-
-  // Separate cards by type
-  const tempuras = cards.filter((c) => c.type === "tempura");
-  const sashimis = cards.filter((c) => c.type === "sashimi");
-  const dumplings = cards.filter((c) => c.type === "dumpling");
-  const makis = cards.filter((c) => c.type.startsWith("maki"));
-  const puddings = cards.filter((c) => c.type === "pudding");
-  const chopsticks = cards.filter((c) => c.type === "chopsticks");
-
-  // Process nigiri and wasabi in order
-  const wasabiNigiriPairs: { wasabi: CardType; nigiri: CardType }[] = [];
-  const standaloneNigiris: CardType[] = [];
-  const unusedWasabis: CardType[] = [];
-  let pendingWasabis: CardType[] = [];
-
-  for (const card of cards) {
-    if (card.type === "wasabi") {
-      pendingWasabis.push(card);
-    } else if (card.type.startsWith("nigiri_")) {
-      if (pendingWasabis.length > 0) {
-        wasabiNigiriPairs.push({
-          wasabi: pendingWasabis.shift()!,
-          nigiri: card,
-        });
-      } else {
-        standaloneNigiris.push(card);
-      }
-    }
-  }
-  unusedWasabis.push(...pendingWasabis);
-
-  // Tempura: 5 pts per pair
-  if (tempuras.length > 0) {
-    const pairs = Math.floor(tempuras.length / 2);
-    const points = pairs * 5;
-    items.push({
-      label: "Tempura",
-      cards: tempuras,
-      points,
-      description:
-        pairs > 0
-          ? `${pairs} pair${pairs > 1 ? "s" : ""} = ${points} pts`
-          : "2 needed for 5 pts",
-    });
-  }
-
-  // Sashimi: 10 pts per set of 3
-  if (sashimis.length > 0) {
-    const sets = Math.floor(sashimis.length / 3);
-    const points = sets * 10;
-    items.push({
-      label: "Sashimi",
-      cards: sashimis,
-      points,
-      description:
-        sets > 0
-          ? `${sets} set${sets > 1 ? "s" : ""} = ${points} pts`
-          : "3 needed for 10 pts",
-    });
-  }
-
-  // Dumplings: 1/3/6/10/15
-  if (dumplings.length > 0) {
-    const points = DUMPLING_POINTS[Math.min(dumplings.length, 5)];
-    items.push({
-      label: "Dumplings",
-      cards: dumplings,
-      points,
-      description: `${dumplings.length} dumpling${
-        dumplings.length > 1 ? "s" : ""
-      } = ${points} pts`,
-    });
-  }
-
-  // Wasabi + Nigiri combos
-  for (const { wasabi, nigiri } of wasabiNigiriPairs) {
-    const basePoints = NIGIRI_VALUES[nigiri.type];
-    const points = basePoints * 3;
-    const nigiriName =
-      nigiri.type === "nigiri_egg"
-        ? "Egg"
-        : nigiri.type === "nigiri_salmon"
-        ? "Salmon"
-        : "Squid";
-    items.push({
-      label: `Wasabi + ${nigiriName}`,
-      cards: [wasabi, nigiri],
-      points,
-      description: `${basePoints} x 3 = ${points} pts`,
-    });
-  }
-
-  // Standalone nigiris
-  if (standaloneNigiris.length > 0) {
-    const points = standaloneNigiris.reduce((sum, card) => {
-      return sum + (NIGIRI_VALUES[card.type] || 0);
-    }, 0);
-    items.push({
-      label: "Nigiri",
-      cards: standaloneNigiris,
-      points,
-    });
-  }
-
-  // Unused wasabi
-  if (unusedWasabis.length > 0) {
-    items.push({
-      label: "Unused Wasabi",
-      cards: unusedWasabis,
-      points: 0,
-      description: "No nigiri to enhance",
-    });
-  }
-
-  // Maki - handled separately with rankings, but still include cards
-  if (makis.length > 0) {
-    items.push({
-      label: "Maki Rolls",
-      cards: makis,
-      points: 0, // Points calculated separately with rankings
-    });
-  }
-
-  // Pudding (end-game scoring)
-  if (puddings.length > 0) {
-    items.push({
-      label: "Pudding",
-      cards: puddings,
-      points: 0,
-      description: `${puddings.length} saved for end`,
-    });
-  }
-
-  // Chopsticks
-  if (chopsticks.length > 0) {
-    items.push({
-      label: "Chopsticks",
-      cards: chopsticks,
-      points: 0,
-      description: "Not used",
-    });
-  }
-
-  return items;
 }
 
 function MakiDescription({

@@ -11,6 +11,14 @@ export interface PlayerPuddingData {
   puddings: number;
 }
 
+// Score breakdown item for display
+export interface ScoreItem {
+  label: string;
+  cards: Card[];
+  points: number;
+  description?: string;
+}
+
 // Scoring constants
 export const DUMPLING_POINTS = [0, 1, 3, 6, 10, 15] as const;
 
@@ -20,51 +28,15 @@ export const NIGIRI_VALUES: Record<string, number> = {
   'nigiri_egg': 1
 };
 
+const NIGIRI_NAMES: Record<string, string> = {
+  'nigiri_egg': 'Egg',
+  'nigiri_salmon': 'Salmon',
+  'nigiri_squid': 'Squid'
+};
+
 // Count cards of specific types
 function countCardType(cards: Card[], ...types: string[]): number {
   return cards.filter(c => types.includes(c.type)).length;
-}
-
-// Score tempura: 5 points per pair
-export function scoreTempura(cards: Card[]): number {
-  const count = countCardType(cards, 'tempura');
-  return Math.floor(count / 2) * 5;
-}
-
-// Score sashimi: 10 points per set of 3
-export function scoreSashimi(cards: Card[]): number {
-  const count = countCardType(cards, 'sashimi');
-  return Math.floor(count / 3) * 10;
-}
-
-// Score dumplings: 1/3/6/10/15 points for 1/2/3/4/5+ dumplings
-export function scoreDumplings(cards: Card[]): number {
-  const count = countCardType(cards, 'dumpling');
-  return DUMPLING_POINTS[Math.min(count, 5)];
-}
-
-// Score nigiri with wasabi
-// Wasabi triples the next nigiri - we assign wasabi to highest value nigiri first
-export function scoreNigiri(cards: Card[]): number {
-  let score = 0;
-  let wasabiCount = countCardType(cards, 'wasabi');
-
-  // Get all nigiri sorted by value (highest first to maximize wasabi usage)
-  const nigiriCards = cards
-    .filter(c => c.type.startsWith('nigiri_'))
-    .sort((a, b) => NIGIRI_VALUES[b.type] - NIGIRI_VALUES[a.type]);
-
-  for (const nigiri of nigiriCards) {
-    const baseValue = NIGIRI_VALUES[nigiri.type];
-    if (wasabiCount > 0) {
-      score += baseValue * 3;
-      wasabiCount--;
-    } else {
-      score += baseValue;
-    }
-  }
-
-  return score;
 }
 
 // Count maki rolls in cards
@@ -83,15 +55,149 @@ export function countPuddings(cards: Card[]): number {
   return countCardType(cards, 'pudding');
 }
 
+// Calculate detailed score breakdown for a round's cards
+export function calculateScoreBreakdown(cards: Card[]): ScoreItem[] {
+  const items: ScoreItem[] = [];
+
+  // Separate cards by type
+  const tempuras = cards.filter(c => c.type === 'tempura');
+  const sashimis = cards.filter(c => c.type === 'sashimi');
+  const dumplings = cards.filter(c => c.type === 'dumpling');
+  const makis = cards.filter(c => c.type.startsWith('maki'));
+  const puddings = cards.filter(c => c.type === 'pudding');
+  const chopsticks = cards.filter(c => c.type === 'chopsticks');
+
+  // Process nigiri and wasabi in play order
+  const wasabiNigiriPairs: { wasabi: Card; nigiri: Card }[] = [];
+  const standaloneNigiris: Card[] = [];
+  const unusedWasabis: Card[] = [];
+  const pendingWasabis: Card[] = [];
+
+  for (const card of cards) {
+    if (card.type === 'wasabi') {
+      pendingWasabis.push(card);
+    } else if (card.type.startsWith('nigiri_')) {
+      if (pendingWasabis.length > 0) {
+        wasabiNigiriPairs.push({
+          wasabi: pendingWasabis.shift()!,
+          nigiri: card,
+        });
+      } else {
+        standaloneNigiris.push(card);
+      }
+    }
+  }
+  unusedWasabis.push(...pendingWasabis);
+
+  // Tempura: 5 pts per pair
+  if (tempuras.length > 0) {
+    const pairs = Math.floor(tempuras.length / 2);
+    const points = pairs * 5;
+    items.push({
+      label: 'Tempura',
+      cards: tempuras,
+      points,
+      description: pairs > 0
+        ? `${pairs} pair${pairs > 1 ? 's' : ''} = ${points} pts`
+        : '2 needed for 5 pts',
+    });
+  }
+
+  // Sashimi: 10 pts per set of 3
+  if (sashimis.length > 0) {
+    const sets = Math.floor(sashimis.length / 3);
+    const points = sets * 10;
+    items.push({
+      label: 'Sashimi',
+      cards: sashimis,
+      points,
+      description: sets > 0
+        ? `${sets} set${sets > 1 ? 's' : ''} = ${points} pts`
+        : '3 needed for 10 pts',
+    });
+  }
+
+  // Dumplings: 1/3/6/10/15
+  if (dumplings.length > 0) {
+    const points = DUMPLING_POINTS[Math.min(dumplings.length, 5)];
+    items.push({
+      label: 'Dumplings',
+      cards: dumplings,
+      points,
+      description: `${dumplings.length} dumpling${dumplings.length > 1 ? 's' : ''} = ${points} pts`,
+    });
+  }
+
+  // Wasabi + Nigiri combos
+  for (const { wasabi, nigiri } of wasabiNigiriPairs) {
+    const basePoints = NIGIRI_VALUES[nigiri.type];
+    const points = basePoints * 3;
+    items.push({
+      label: `Wasabi + ${NIGIRI_NAMES[nigiri.type]}`,
+      cards: [wasabi, nigiri],
+      points,
+      description: `${basePoints} x 3 = ${points} pts`,
+    });
+  }
+
+  // Standalone nigiris
+  if (standaloneNigiris.length > 0) {
+    const points = standaloneNigiris.reduce((sum, card) => {
+      return sum + (NIGIRI_VALUES[card.type] || 0);
+    }, 0);
+    items.push({
+      label: 'Nigiri',
+      cards: standaloneNigiris,
+      points,
+    });
+  }
+
+  // Unused wasabi
+  if (unusedWasabis.length > 0) {
+    items.push({
+      label: 'Unused Wasabi',
+      cards: unusedWasabis,
+      points: 0,
+      description: 'No nigiri to enhance',
+    });
+  }
+
+  // Maki - points calculated separately with rankings
+  if (makis.length > 0) {
+    items.push({
+      label: 'Maki Rolls',
+      cards: makis,
+      points: 0,
+    });
+  }
+
+  // Pudding - end-game scoring
+  if (puddings.length > 0) {
+    items.push({
+      label: 'Pudding',
+      cards: puddings,
+      points: 0,
+      description: `${puddings.length} saved for end`,
+    });
+  }
+
+  // Chopsticks
+  if (chopsticks.length > 0) {
+    items.push({
+      label: 'Chopsticks',
+      cards: chopsticks,
+      points: 0,
+      description: 'Not used',
+    });
+  }
+
+  return items;
+}
+
 // Score all non-comparative cards for a round
 export function scoreRoundCards(cards: Card[]): number {
-  let score = 0;
-  score += scoreTempura(cards);
-  score += scoreSashimi(cards);
-  score += scoreDumplings(cards);
-  score += scoreNigiri(cards);
-  // Maki is scored separately via scoreMakiForPlayers
-  return score;
+  const breakdown = calculateScoreBreakdown(cards);
+  return breakdown.reduce((sum, item) => sum + item.points, 0);
 }
 
 // Calculate a single player's maki bonus given all players' maki counts
