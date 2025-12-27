@@ -9,6 +9,12 @@ interface RevealedCards {
   cards: Card[];
 }
 
+export interface RoundScore {
+  playerId: string;
+  roundScore: number;
+  totalScore: number;
+}
+
 interface GameContextType {
   socket: GameSocket | null;
   isConnected: boolean;
@@ -19,6 +25,7 @@ interface GameContextType {
   gameCode: string | null;
   error: string | null;
   revealedCards: RevealedCards[] | null;
+  roundScores: RoundScore[] | null;
   finalScores: { playerId: string; totalScore: number; puddings: number }[] | null;
   winner: string | null;
 
@@ -46,7 +53,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const myPlayerIdRef = useRef<string | null>(null);
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [revealedCards, setRevealedCards] = useState<RevealedCards[] | null>(null);
+  const [roundScores, setRoundScores] = useState<RoundScore[] | null>(null);
   const [finalScores, setFinalScores] = useState<{ playerId: string; totalScore: number; puddings: number }[] | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
 
@@ -75,7 +84,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
     });
 
     newSocket.on('game:error', ({ message }) => {
+      // Clear any existing error timeout
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
       setError(message);
+      // Auto-clear error after 3 seconds
+      errorTimeoutRef.current = setTimeout(() => {
+        setError(null);
+      }, 3000);
     });
 
     newSocket.on('player:joined', ({ players, gameState: state }) => {
@@ -97,6 +114,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     newSocket.on('hand:dealt', ({ hand: newHand }) => {
       setHand(newHand);
       setSelectedCards([]);
+      setRoundScores(null); // Clear round scores when new hand is dealt
     });
 
     newSocket.on('player:ready', ({ playerId }) => {
@@ -118,7 +136,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setTimeout(() => setRevealedCards(null), 2000);
     });
 
-    newSocket.on('round:end', ({ gameState: state }) => {
+    newSocket.on('round:end', ({ scores, gameState: state }) => {
+      setRoundScores(scores);
       setGameState(state);
     });
 
@@ -199,6 +218,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [socket]);
 
   const clearError = useCallback(() => {
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = null;
+    }
     setError(null);
   }, []);
 
@@ -214,6 +237,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         gameCode,
         error,
         revealedCards,
+        roundScores,
         finalScores,
         winner,
         createGame,

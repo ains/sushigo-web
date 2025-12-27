@@ -1,40 +1,45 @@
-import { useState } from 'react';
-import { useGame } from '../../context/GameContext';
-import { Card } from '../shared/Card';
-import './PlayerHand.css';
+import { useState } from "react";
+import { useGame } from "../../context/GameContext";
+import { Card } from "../shared/Card";
+import "./PlayerHand.css";
 
 export function PlayerHand() {
-  const { hand, selectedCards, toggleCardSelection, confirmSelection, gameState, myPlayerId } = useGame();
+  const {
+    hand,
+    selectedCards,
+    toggleCardSelection,
+    confirmSelection,
+    gameState,
+    myPlayerId,
+  } = useGame();
   const [isPassingCards, setIsPassingCards] = useState(false);
-  const [passDirection, setPassDirection] = useState<'left' | 'right'>('right');
+  const [passDirection, setPassDirection] = useState<"left" | "right">("right");
 
   const players = gameState?.players || [];
-  const myIndex = players.findIndex(p => p.id === myPlayerId);
+  const myIndex = players.findIndex((p) => p.id === myPlayerId);
   const currentRound = gameState?.currentRound || 1;
   const myPlayer = players[myIndex];
-  const hasChopsticks = myPlayer?.playedCards[currentRound - 1]?.some(c => c.type === 'chopsticks');
+  const hasChopsticks = myPlayer?.playedCards[currentRound - 1]?.some(
+    (c) => c.type === "chopsticks"
+  );
   const maxCards = hasChopsticks ? 2 : 1;
 
   // Determine pass direction: odd rounds = clockwise, even rounds = counter-clockwise
   const isClockwise = currentRound % 2 === 1;
 
-  // Calculate who we pass to and receive from
+  // Calculate who we pass to
   const numPlayers = players.length;
   let passToIndex: number;
-  let receiveFromIndex: number;
 
   if (isClockwise) {
-    // Clockwise: pass to next player, receive from previous
+    // Clockwise: pass to next player
     passToIndex = (myIndex + 1) % numPlayers;
-    receiveFromIndex = (myIndex - 1 + numPlayers) % numPlayers;
   } else {
-    // Counter-clockwise: pass to previous player, receive from next
+    // Counter-clockwise: pass to previous player
     passToIndex = (myIndex - 1 + numPlayers) % numPlayers;
-    receiveFromIndex = (myIndex + 1) % numPlayers;
   }
 
   const passToPlayer = players[passToIndex];
-  const receiveFromPlayer = players[receiveFromIndex];
 
   const canConfirm = selectedCards.length > 0 && !isPassingCards;
 
@@ -43,7 +48,7 @@ export function PlayerHand() {
 
     // Set the pass direction for animation
     // Clockwise = cards fly right, Counter-clockwise = cards fly left
-    setPassDirection(isClockwise ? 'right' : 'left');
+    setPassDirection(isClockwise ? "right" : "left");
     setIsPassingCards(true);
 
     // Wait for animation to complete before confirming
@@ -65,37 +70,40 @@ export function PlayerHand() {
           <span>Turn {gameState?.currentTurn || 1}</span>
         </div>
         {hasChopsticks && (
-          <div className="chopsticks-notice">
-            🥢 You can play 2 cards!
-          </div>
+          <div className="chopsticks-notice">🥢 You can play 2 cards!</div>
         )}
       </div>
 
       {numPlayers > 1 && (
         <div className="pass-info">
           <span className="pass-direction">
-            {isClockwise ? '↻' : '↺'} Passing {isClockwise ? 'clockwise' : 'counter-clockwise'}
+            {isClockwise ? "↻" : "↺"} Passing{" "}
+            {isClockwise ? "clockwise" : "counter-clockwise"}
           </span>
           <div className="pass-details">
-            <span>→ To <strong>{passToPlayer?.name}</strong></span>
-            <span>← From <strong>{receiveFromPlayer?.name}</strong></span>
+            <span>
+              → Remaining cards will be passed to{" "}
+              <strong>{passToPlayer?.name}</strong>
+            </span>
           </div>
         </div>
       )}
 
       <div className="instruction">
-        Select {maxCards === 2 ? '1 or 2 cards' : 'a card'} to play
+        Select {maxCards === 2 ? "1 or 2 cards" : "a card"} to play
       </div>
 
       <div className="cards-container">
-        {hand.map(card => {
+        {hand.map((card) => {
           const isSelected = selectedCards.includes(card.id);
           const shouldFlyOff = isPassingCards && !isSelected;
 
           return (
             <div
               key={card.id}
-              className={`card-wrapper ${shouldFlyOff ? `flying-${passDirection}` : ''} ${isSelected && isPassingCards ? 'playing' : ''}`}
+              className={`card-wrapper ${
+                shouldFlyOff ? `flying-${passDirection}` : ""
+              } ${isSelected && isPassingCards ? "playing" : ""}`}
             >
               <Card
                 card={card}
@@ -116,12 +124,12 @@ export function PlayerHand() {
           onClick={handleConfirm}
         >
           {isPassingCards
-            ? 'Passing cards...'
+            ? "Passing cards..."
             : selectedCards.length === 0
-              ? 'Select a card'
-              : selectedCards.length === 1
-                ? 'Play Card'
-                : 'Play 2 Cards'}
+            ? "Select a card"
+            : selectedCards.length === 1
+            ? "Play Card"
+            : "Play 2 Cards"}
         </button>
       </div>
     </div>

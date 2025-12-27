@@ -4,11 +4,12 @@ import { JoinGame } from './JoinGame';
 import { SeatSelect } from './SeatSelect';
 import { PlayerHand } from './PlayerHand';
 import { WaitingScreen } from './WaitingScreen';
+import { RoundScoreBreakdown } from './RoundScoreBreakdown';
 import './MobileView.css';
 
 export function MobileView() {
   const { code } = useParams<{ code?: string }>();
-  const { gameState, myPlayerId, finalScores, winner, selectSeat } = useGame();
+  const { gameState, myPlayerId, roundScores, finalScores, winner, selectSeat } = useGame();
 
   const phase = gameState?.phase;
   const myPlayer = gameState?.players.find(p => p.id === myPlayerId);
@@ -87,16 +88,14 @@ export function MobileView() {
   }
 
   // Round end
-  if (phase === 'round_end') {
+  if (phase === 'round_end' && myPlayer) {
+    const myRoundScore = roundScores?.find(s => s.playerId === myPlayerId);
     return (
-      <div className="mobile-view round-end">
-        <h1>Round {gameState.currentRound} Complete!</h1>
-        <div className="my-score">
-          <span className="score-label">Your Score</span>
-          <span className="score-value">{myPlayer?.score || 0}</span>
-        </div>
-        <p className="waiting-text">Next round starting soon...</p>
-      </div>
+      <RoundScoreBreakdown
+        player={myPlayer}
+        roundScore={myRoundScore}
+        currentRound={gameState.currentRound}
+      />
     );
   }
 

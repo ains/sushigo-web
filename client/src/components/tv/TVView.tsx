@@ -1,21 +1,30 @@
-import { useEffect, useState } from 'react';
-import { useGame } from '../../context/GameContext';
-import { QRCodeDisplay } from '../tablet/QRCodeDisplay';
-import { SeatLayout } from '../tablet/SeatLayout';
-import { TVGameBoard } from './TVGameBoard';
-import { ScoreBoard } from '../tablet/ScoreBoard';
-import { RoundInfo } from '../tablet/RoundInfo';
-import './TVView.css';
+import { useEffect, useState } from "react";
+import { useGame } from "../../context/GameContext";
+import { QRCodeDisplay } from "../tablet/QRCodeDisplay";
+import { SeatLayout } from "../tablet/SeatLayout";
+import { TVGameBoard } from "./TVGameBoard";
+import { ScoreBoard } from "../tablet/ScoreBoard";
+import { RoundInfo } from "../tablet/RoundInfo";
+import "./TVView.css";
 
 export function TVView() {
-  const { gameState, gameCode, createGame, startGame, restartGame, finalScores, winner, isConnected } = useGame();
-  const [serverUrl, setServerUrl] = useState<string>('');
+  const {
+    gameState,
+    gameCode,
+    createGame,
+    startGame,
+    restartGame,
+    finalScores,
+    winner,
+    isConnected,
+  } = useGame();
+  const [serverUrl, setServerUrl] = useState<string>("");
 
   useEffect(() => {
     // Get server info for QR code
-    fetch('/api/server-info')
-      .then(res => res.json())
-      .then(data => setServerUrl(data.url))
+    fetch("/api/server-info")
+      .then((res) => res.json())
+      .then((data) => setServerUrl(data.url))
       .catch(() => setServerUrl(window.location.origin));
   }, []);
 
@@ -26,26 +35,32 @@ export function TVView() {
     }
   }, [isConnected, gameCode, gameState, createGame]);
 
-  const phase = gameState?.phase || 'lobby';
+  const phase = gameState?.phase || "lobby";
   const players = gameState?.players || [];
-  const allSeated = players.length >= 2 && players.every(p => p.seatIndex !== null);
+  const allSeated =
+    players.length >= 2 && players.every((p) => p.seatIndex !== null);
   const canStart = allSeated;
 
   // Game ended
   if (finalScores && winner) {
-    const winnerPlayer = gameState?.players.find(p => p.id === winner);
+    const winnerPlayer = gameState?.players.find((p) => p.id === winner);
     return (
       <div className="tv-view game-end">
         <h1>Game Over!</h1>
         <div className="winner-announcement">
           <span className="winner-emoji">🏆</span>
-          <h2>{winnerPlayer?.name || 'Unknown'} Wins!</h2>
+          <h2>{winnerPlayer?.name || "Unknown"} Wins!</h2>
         </div>
         <div className="final-scores">
           {finalScores.map((score, index) => {
-            const player = gameState?.players.find(p => p.id === score.playerId);
+            const player = gameState?.players.find(
+              (p) => p.id === score.playerId
+            );
             return (
-              <div key={score.playerId} className={`score-row ${index === 0 ? 'winner' : ''}`}>
+              <div
+                key={score.playerId}
+                className={`score-row ${index === 0 ? "winner" : ""}`}
+              >
                 <span className="rank">{index + 1}</span>
                 <span className="name">{player?.name}</span>
                 <span className="puddings">🍮 {score.puddings}</span>
@@ -62,16 +77,16 @@ export function TVView() {
   }
 
   // Lobby - waiting for players
-  if (phase === 'lobby') {
-    const unseatedPlayers = players.filter(p => p.seatIndex === null);
-    const seatedCount = players.filter(p => p.seatIndex !== null).length;
+  if (phase === "lobby") {
+    const unseatedPlayers = players.filter((p) => p.seatIndex === null);
+    const seatedCount = players.filter((p) => p.seatIndex !== null).length;
 
     return (
       <div className="tv-view lobby">
         <div className="lobby-header">
           <h1>Sushi Go!</h1>
           <div className="lobby-status">
-            {players.length} player{players.length !== 1 ? 's' : ''} joined
+            {players.length} player{players.length !== 1 ? "s" : ""} joined
             {seatedCount > 0 && ` • ${seatedCount} seated`}
           </div>
         </div>
@@ -84,7 +99,7 @@ export function TVView() {
             {unseatedPlayers.length > 0 && (
               <div className="unseated-players">
                 <div className="unseated-label">Select a seat:</div>
-                {unseatedPlayers.map(player => (
+                {unseatedPlayers.map((player) => (
                   <div key={player.id} className="unseated-player">
                     {player.name}
                   </div>
@@ -101,10 +116,10 @@ export function TVView() {
               onClick={startGame}
             >
               {players.length < 2
-                ? 'Need at least 2 players'
+                ? "Need at least 2 players"
                 : !allSeated
-                  ? 'All players must select a seat'
-                  : 'Start Game'}
+                ? "All players must select a seat"
+                : "Start Game"}
             </button>
           </div>
         </div>
@@ -123,11 +138,14 @@ export function TVView() {
         />
         <ScoreBoard players={players} />
       </div>
-      <TVGameBoard players={players} currentRound={gameState?.currentRound || 1} />
-      {phase === 'round_end' && (
+      <TVGameBoard
+        players={players}
+        currentRound={gameState?.currentRound || 1}
+      />
+      {phase === "round_end" && (
         <div className="round-end-overlay">
           <h2>Round {gameState?.currentRound} Complete!</h2>
-          <p>Next round starting soon...</p>
+          <p>Next round starting in 10seconds...</p>
         </div>
       )}
     </div>
