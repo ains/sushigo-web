@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { LandingPage } from './components/landing/LandingPage';
 import { TabletView } from './components/tablet/TabletView';
 import { TVView } from './components/tv/TVView';
 import { MobileView } from './components/mobile/MobileView';
@@ -21,7 +22,8 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/" element={<TabletView />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/tablet" element={<TabletView />} />
         <Route path="/tv" element={<TVView />} />
         <Route path="/spectate/:code" element={<SpectatorView />} />
         <Route path="/join/:code?" element={<MobileView />} />
