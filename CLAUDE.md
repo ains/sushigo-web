@@ -18,6 +18,10 @@ npm run build
 # Start production server
 npm start
 
+# Run tests
+npm test              # Run shared package tests once
+npm run test:watch    # Run tests in watch mode
+
 # Individual package development
 npm run dev:client    # Vite dev server on port 5173
 npm run dev:server    # tsx watch on port 3000
@@ -51,11 +55,16 @@ Socket.IO handles all game events. Key event flow:
 5. Hands rotate → repeat until round ends
 6. Score calculation → next round or game end
 
+### Shared Package (`shared/src/`)
+
+- `index.ts`: Shared types (Card, GamePhase, PublicPlayer, PublicGameState, Socket events)
+- `scoring.ts`: All scoring logic (tempura, sashimi, dumplings, maki, nigiri, wasabi, pudding)
+- `scoring.test.ts`: Vitest test suite for scoring functions
+
 ### Server Structure (`server/src/`)
 
 - `game/Game.ts`: Core state machine (lobby → playing → round_end → game_end)
 - `game/GameManager.ts`: Singleton managing all active games
-- `game/scoring.ts`: All scoring logic (tempura, sashimi, dumplings, maki, nigiri, wasabi, pudding)
 - `socket/handlers.ts`: Socket event handlers for all game actions
 
 ### Client Structure (`client/src/`)
@@ -80,4 +89,4 @@ Socket.IO handles all game events. Key event flow:
 - Server serves built client from `/client/dist` in production
 - Development uses Vite proxy for Socket.IO WebSocket connections
 - TypeScript strict mode enabled throughout
-- Types are defined in both `client/src/types/` and `server/src/types/` (keep in sync)
+- Shared types and scoring logic are in the `shared` package (`sushigo-shared`)
