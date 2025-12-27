@@ -1,6 +1,5 @@
 import { Card as CardType, PublicPlayer } from "../../types";
 import { Card } from "../shared/Card";
-import { RoundScore } from "../../context/GameContext";
 import "./RoundScoreBreakdown.css";
 
 interface ScoreItem {
@@ -13,7 +12,6 @@ interface ScoreItem {
 interface RoundScoreBreakdownProps {
   player: PublicPlayer;
   allPlayers: PublicPlayer[];
-  roundScore: RoundScore | undefined;
   currentRound: number;
 }
 
@@ -283,7 +281,6 @@ function MakiDescription({
 export function RoundScoreBreakdown({
   player,
   allPlayers,
-  roundScore,
   currentRound,
 }: RoundScoreBreakdownProps) {
   const roundCards = player.playedCards[currentRound - 1] || [];
@@ -293,15 +290,12 @@ export function RoundScoreBreakdown({
   const myMakiCount = myMakiRanking?.makiCount || 0;
   const myMakiPoints = myMakiRanking?.points || 0;
 
-  const calculatedPoints = scoreItems.reduce(
+  const roundPoints = scoreItems.reduce(
     (sum, item) => sum + item.points,
     0
-  );
+  ) + myMakiPoints; // Include maki points in total
 
-  // Use roundScore if available, otherwise use calculated points
-  const displayRoundScore = roundScore?.roundScore ?? calculatedPoints;
-  const previousScore =
-    (roundScore?.totalScore ?? player.score) - displayRoundScore;
+  const previousScore = player.score - roundPoints;
 
   return (
     <div className="round-score-breakdown">
@@ -361,11 +355,11 @@ export function RoundScoreBreakdown({
         </div>
         <div className="score-row round-score">
           <span>Round {currentRound} Points</span>
-          <span>+{displayRoundScore}</span>
+          <span>+{roundPoints}</span>
         </div>
         <div className="score-row total-score">
           <span>Total Score</span>
-          <span>{roundScore?.totalScore ?? player.score}</span>
+          <span>{player.score}</span>
         </div>
       </div>
 

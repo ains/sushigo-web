@@ -1,5 +1,4 @@
 import { Card, PublicPlayer, PublicGameState } from '../../types';
-import { RoundScore } from '../../context/GameContext';
 
 let cardIdCounter = 1;
 
@@ -179,15 +178,6 @@ export function createMockGameState(scenario: 'mid-round' | 'round-end' | 'game-
     currentTurn: scenario === 'mid-round' ? 5 : scenario === 'round-end' ? 10 : 10,
     maxPlayers: 4,
   };
-}
-
-// Create mock round scores
-export function createMockRoundScores(players: PublicPlayer[]): RoundScore[] {
-  return players.map(p => ({
-    playerId: p.id,
-    roundScore: Math.floor(Math.random() * 15) + 5,
-    totalScore: p.score,
-  }));
 }
 
 // Create mock final scores

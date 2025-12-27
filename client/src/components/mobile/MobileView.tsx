@@ -10,7 +10,7 @@ import './MobileView.css';
 
 export function MobileView() {
   const { code } = useParams<{ code?: string }>();
-  const { gameState, myPlayerId, roundScores, finalScores, winner, selectSeat } = useGame();
+  const { gameState, myPlayerId, finalScores, winner, selectSeat } = useGame();
 
   const phase = gameState?.phase;
   const myPlayer = gameState?.players.find(p => p.id === myPlayerId);
@@ -78,12 +78,10 @@ export function MobileView() {
 
   // Round end
   if (phase === 'round_end' && myPlayer) {
-    const myRoundScore = roundScores?.find(s => s.playerId === myPlayerId);
     return (
       <RoundScoreBreakdown
         player={myPlayer}
         allPlayers={gameState.players}
-        roundScore={myRoundScore}
         currentRound={gameState.currentRound}
       />
     );

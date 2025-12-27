@@ -7,7 +7,6 @@ import { TVGameBoard } from '../tv/TVGameBoard';
 import {
   createMockGameState,
   createMockHand,
-  createMockRoundScores,
   createMockFinalScores,
 } from './mockData';
 import './DebugView.css';
@@ -44,16 +43,12 @@ function DebugMobileView({ view }: { view: ViewType }) {
   }
 
   if (view === 'round-end') {
-    const roundScores = createMockRoundScores(gameState.players);
-    const myRoundScore = roundScores.find(s => s.playerId === myPlayer.id);
-
     return (
       <div className="debug-mobile-container">
         <div className="debug-info">Debug: Round End</div>
         <RoundScoreBreakdown
           player={myPlayer}
           allPlayers={gameState.players}
-          roundScore={myRoundScore}
           currentRound={gameState.currentRound}
         />
       </div>
