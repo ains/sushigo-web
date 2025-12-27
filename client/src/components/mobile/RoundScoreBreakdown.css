@@ -25,17 +25,20 @@
   background: var(--surface);
   border-radius: 12px;
   padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
 }
 
 .score-item.no-points {
   opacity: 0.7;
 }
 
-.score-item-header {
+.score-item-content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
 }
 
 .score-item-label {
@@ -45,8 +48,13 @@
 
 .score-item-points {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 24px;
   color: var(--secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  text-align: center;
 }
 
 .score-item.no-points .score-item-points {
@@ -57,12 +65,23 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 6px;
 }
 
 .score-item-description {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.maki-description p {
+  margin: 4px 0;
+}
+
+.maki-description p:first-child {
+  margin-bottom: 8px;
+}
+
+.maki-description .maki-winner-me {
+  color: var(--secondary);
 }
 
 .no-cards-message {

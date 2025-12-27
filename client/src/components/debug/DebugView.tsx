@@ -52,6 +52,7 @@ function DebugMobileView({ view }: { view: ViewType }) {
         <div className="debug-info">Debug: Round End</div>
         <RoundScoreBreakdown
           player={myPlayer}
+          allPlayers={gameState.players}
           roundScore={myRoundScore}
           currentRound={gameState.currentRound}
         />

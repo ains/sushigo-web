@@ -82,6 +82,7 @@ export function MobileView() {
     return (
       <RoundScoreBreakdown
         player={myPlayer}
+        allPlayers={gameState.players}
         roundScore={myRoundScore}
         currentRound={gameState.currentRound}
       />

@@ -1,7 +1,7 @@
-import { Card as CardType, PublicPlayer } from '../../types';
-import { Card } from '../shared/Card';
-import { RoundScore } from '../../context/GameContext';
-import './RoundScoreBreakdown.css';
+import { Card as CardType, PublicPlayer } from "../../types";
+import { Card } from "../shared/Card";
+import { RoundScore } from "../../context/GameContext";
+import "./RoundScoreBreakdown.css";
 
 interface ScoreItem {
   label: string;
@@ -12,20 +12,86 @@ interface ScoreItem {
 
 interface RoundScoreBreakdownProps {
   player: PublicPlayer;
+  allPlayers: PublicPlayer[];
   roundScore: RoundScore | undefined;
   currentRound: number;
+}
+
+interface MakiRanking {
+  playerId: string;
+  playerName: string;
+  makiCount: number;
+  points: number;
+}
+
+function countMaki(cards: CardType[]): number {
+  return cards.reduce((sum, card) => {
+    if (card.type === "maki1") return sum + 1;
+    if (card.type === "maki2") return sum + 2;
+    if (card.type === "maki3") return sum + 3;
+    return sum;
+  }, 0);
+}
+
+function calculateMakiRankings(
+  players: PublicPlayer[],
+  roundIndex: number
+): MakiRanking[] {
+  const playerMakis = players.map((p) => ({
+    playerId: p.id,
+    playerName: p.name,
+    makiCount: countMaki(p.playedCards[roundIndex] || []),
+    points: 0,
+  }));
+
+  // Sort by maki count descending
+  const sorted = [...playerMakis].sort((a, b) => b.makiCount - a.makiCount);
+
+  if (sorted.length === 0 || sorted[0].makiCount === 0) {
+    return playerMakis;
+  }
+
+  const highest = sorted[0].makiCount;
+  const firstPlacePlayers = sorted.filter((p) => p.makiCount === highest);
+
+  // Award 6 points split among first place
+  const firstPlacePoints = Math.floor(6 / firstPlacePlayers.length);
+  firstPlacePlayers.forEach((p) => {
+    const player = playerMakis.find((pm) => pm.playerId === p.playerId);
+    if (player) player.points = firstPlacePoints;
+  });
+
+  // If there's only one first place winner, award second place
+  if (firstPlacePlayers.length === 1) {
+    const remaining = sorted.filter(
+      (p) => p.makiCount < highest && p.makiCount > 0
+    );
+    if (remaining.length > 0) {
+      const secondHighest = remaining[0].makiCount;
+      const secondPlacePlayers = remaining.filter(
+        (p) => p.makiCount === secondHighest
+      );
+      const secondPlacePoints = Math.floor(3 / secondPlacePlayers.length);
+      secondPlacePlayers.forEach((p) => {
+        const player = playerMakis.find((pm) => pm.playerId === p.playerId);
+        if (player) player.points = secondPlacePoints;
+      });
+    }
+  }
+
+  return playerMakis;
 }
 
 function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   const items: ScoreItem[] = [];
 
   // Separate cards by type
-  const tempuras = cards.filter(c => c.type === 'tempura');
-  const sashimis = cards.filter(c => c.type === 'sashimi');
-  const dumplings = cards.filter(c => c.type === 'dumpling');
-  const makis = cards.filter(c => c.type.startsWith('maki'));
-  const puddings = cards.filter(c => c.type === 'pudding');
-  const chopsticks = cards.filter(c => c.type === 'chopsticks');
+  const tempuras = cards.filter((c) => c.type === "tempura");
+  const sashimis = cards.filter((c) => c.type === "sashimi");
+  const dumplings = cards.filter((c) => c.type === "dumpling");
+  const makis = cards.filter((c) => c.type.startsWith("maki"));
+  const puddings = cards.filter((c) => c.type === "pudding");
+  const chopsticks = cards.filter((c) => c.type === "chopsticks");
 
   // Process nigiri and wasabi in order
   const wasabiNigiriPairs: { wasabi: CardType; nigiri: CardType }[] = [];
@@ -34,9 +100,9 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   let pendingWasabis: CardType[] = [];
 
   for (const card of cards) {
-    if (card.type === 'wasabi') {
+    if (card.type === "wasabi") {
       pendingWasabis.push(card);
-    } else if (card.type.startsWith('nigiri_')) {
+    } else if (card.type.startsWith("nigiri_")) {
       if (pendingWasabis.length > 0) {
         wasabiNigiriPairs.push({
           wasabi: pendingWasabis.shift()!,
@@ -54,12 +120,13 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
     const pairs = Math.floor(tempuras.length / 2);
     const points = pairs * 5;
     items.push({
-      label: 'Tempura',
+      label: "Tempura",
       cards: tempuras,
       points,
-      description: pairs > 0
-        ? `${pairs} pair${pairs > 1 ? 's' : ''} = ${points} pts`
-        : 'Need 2 for 5 pts',
+      description:
+        pairs > 0
+          ? `${pairs} pair${pairs > 1 ? "s" : ""} = ${points} pts`
+          : "2 needed for 5 pts",
     });
   }
 
@@ -68,12 +135,13 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
     const sets = Math.floor(sashimis.length / 3);
     const points = sets * 10;
     items.push({
-      label: 'Sashimi',
+      label: "Sashimi",
       cards: sashimis,
       points,
-      description: sets > 0
-        ? `${sets} set${sets > 1 ? 's' : ''} = ${points} pts`
-        : 'Need 3 for 10 pts',
+      description:
+        sets > 0
+          ? `${sets} set${sets > 1 ? "s" : ""} = ${points} pts`
+          : "3 needed for 10 pts",
     });
   }
 
@@ -82,18 +150,30 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
     const dumplingPoints = [0, 1, 3, 6, 10, 15];
     const points = dumplingPoints[Math.min(dumplings.length, 5)];
     items.push({
-      label: 'Dumplings',
+      label: "Dumplings",
       cards: dumplings,
       points,
-      description: `${dumplings.length} dumpling${dumplings.length > 1 ? 's' : ''} = ${points} pts`,
+      description: `${dumplings.length} dumpling${
+        dumplings.length > 1 ? "s" : ""
+      } = ${points} pts`,
     });
   }
 
   // Wasabi + Nigiri combos
   for (const { wasabi, nigiri } of wasabiNigiriPairs) {
-    const basePoints = nigiri.type === 'nigiri_egg' ? 1 : nigiri.type === 'nigiri_salmon' ? 2 : 3;
+    const basePoints =
+      nigiri.type === "nigiri_egg"
+        ? 1
+        : nigiri.type === "nigiri_salmon"
+        ? 2
+        : 3;
     const points = basePoints * 3;
-    const nigiriName = nigiri.type === 'nigiri_egg' ? 'Egg' : nigiri.type === 'nigiri_salmon' ? 'Salmon' : 'Squid';
+    const nigiriName =
+      nigiri.type === "nigiri_egg"
+        ? "Egg"
+        : nigiri.type === "nigiri_salmon"
+        ? "Salmon"
+        : "Squid";
     items.push({
       label: `Wasabi + ${nigiriName}`,
       cards: [wasabi, nigiri],
@@ -105,13 +185,13 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   // Standalone nigiris
   if (standaloneNigiris.length > 0) {
     const points = standaloneNigiris.reduce((sum, card) => {
-      if (card.type === 'nigiri_egg') return sum + 1;
-      if (card.type === 'nigiri_salmon') return sum + 2;
-      if (card.type === 'nigiri_squid') return sum + 3;
+      if (card.type === "nigiri_egg") return sum + 1;
+      if (card.type === "nigiri_salmon") return sum + 2;
+      if (card.type === "nigiri_squid") return sum + 3;
       return sum;
     }, 0);
     items.push({
-      label: 'Nigiri',
+      label: "Nigiri",
       cards: standaloneNigiris,
       points,
     });
@@ -120,33 +200,26 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   // Unused wasabi
   if (unusedWasabis.length > 0) {
     items.push({
-      label: 'Unused Wasabi',
+      label: "Unused Wasabi",
       cards: unusedWasabis,
       points: 0,
-      description: 'No nigiri to enhance',
+      description: "No nigiri to enhance",
     });
   }
 
-  // Maki (comparative scoring - show count only)
+  // Maki - handled separately with rankings, but still include cards
   if (makis.length > 0) {
-    const totalMaki = makis.reduce((sum, card) => {
-      if (card.type === 'maki1') return sum + 1;
-      if (card.type === 'maki2') return sum + 2;
-      if (card.type === 'maki3') return sum + 3;
-      return sum;
-    }, 0);
     items.push({
-      label: 'Maki Rolls',
+      label: "Maki Rolls",
       cards: makis,
-      points: 0,
-      description: `${totalMaki} maki (scored vs others)`,
+      points: 0, // Points calculated separately with rankings
     });
   }
 
   // Pudding (end-game scoring)
   if (puddings.length > 0) {
     items.push({
-      label: 'Pudding',
+      label: "Pudding",
       cards: puddings,
       points: 0,
       description: `${puddings.length} saved for end`,
@@ -156,48 +229,125 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   // Chopsticks
   if (chopsticks.length > 0) {
     items.push({
-      label: 'Chopsticks',
+      label: "Chopsticks",
       cards: chopsticks,
       points: 0,
-      description: 'Not used',
+      description: "Not used",
     });
   }
 
   return items;
 }
 
-export function RoundScoreBreakdown({ player, roundScore, currentRound }: RoundScoreBreakdownProps) {
+function MakiDescription({
+  myMakiCount,
+  makiRankings,
+  myPlayerId,
+}: {
+  myMakiCount: number;
+  makiRankings: MakiRanking[];
+  myPlayerId: string;
+}) {
+  const winners = makiRankings
+    .filter((r) => r.points > 0)
+    .sort((a, b) => b.points - a.points);
+
+  if (winners.length === 0) {
+    return (
+      <div className="score-item-description">
+        No one scored maki points this round.
+      </div>
+    );
+  }
+
+  return (
+    <div className="score-item-description maki-description">
+      <p>
+        You had <strong>{myMakiCount}</strong> maki{myMakiCount !== 1 ? "" : ""}{" "}
+        this round.
+      </p>
+      {winners.map((winner) => {
+        const isMe = winner.playerId === myPlayerId;
+        const name = isMe ? "You" : winner.playerName;
+        return (
+          <p key={winner.playerId} className={isMe ? "maki-winner-me" : ""}>
+            <strong>+{winner.points} pts</strong> to {name} ({winner.makiCount}{" "}
+            maki)
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+export function RoundScoreBreakdown({
+  player,
+  allPlayers,
+  roundScore,
+  currentRound,
+}: RoundScoreBreakdownProps) {
   const roundCards = player.playedCards[currentRound - 1] || [];
   const scoreItems = calculateScoreBreakdown(roundCards);
-  const calculatedPoints = scoreItems.reduce((sum, item) => sum + item.points, 0);
+  const makiRankings = calculateMakiRankings(allPlayers, currentRound - 1);
+  const myMakiRanking = makiRankings.find((r) => r.playerId === player.id);
+  const myMakiCount = myMakiRanking?.makiCount || 0;
+  const myMakiPoints = myMakiRanking?.points || 0;
+
+  const calculatedPoints = scoreItems.reduce(
+    (sum, item) => sum + item.points,
+    0
+  );
 
   // Use roundScore if available, otherwise use calculated points
   const displayRoundScore = roundScore?.roundScore ?? calculatedPoints;
-  const previousScore = (roundScore?.totalScore ?? player.score) - displayRoundScore;
+  const previousScore =
+    (roundScore?.totalScore ?? player.score) - displayRoundScore;
 
   return (
     <div className="round-score-breakdown">
       <h2>Round {currentRound} Complete!</h2>
 
       <div className="score-items">
-        {scoreItems.map((item, index) => (
-          <div key={index} className={`score-item ${item.points === 0 ? 'no-points' : ''}`}>
-            <div className="score-item-header">
-              <span className="score-item-label">{item.label}</span>
-              <span className="score-item-points">
-                {item.points > 0 ? `+${item.points}` : item.points === 0 ? '-' : item.points}
-              </span>
+        {scoreItems.map((item, index) => {
+          const isMaki = item.label === "Maki Rolls";
+          const displayPoints = isMaki ? myMakiPoints : item.points;
+          const hasPoints = displayPoints > 0;
+
+          return (
+            <div
+              key={index}
+              className={`score-item ${!hasPoints ? "no-points" : ""}`}
+            >
+              <div className="score-item-content">
+                <span className="score-item-label">{item.label}</span>
+                <div className="score-item-cards">
+                  {item.cards.map((card) => (
+                    <Card
+                      key={card.id}
+                      card={card}
+                      size="small"
+                      showPoints={false}
+                    />
+                  ))}
+                </div>
+                {isMaki ? (
+                  <MakiDescription
+                    myMakiCount={myMakiCount}
+                    makiRankings={makiRankings}
+                    myPlayerId={player.id}
+                  />
+                ) : (
+                  item.description && (
+                    <div className="score-item-description">
+                      {item.description}
+                    </div>
+                  )
+                )}
+              </div>
+              <span className="score-item-points">{displayPoints}</span>
             </div>
-            <div className="score-item-cards">
-              {item.cards.map(card => (
-                <Card key={card.id} card={card} size="small" showPoints={false} />
-              ))}
-            </div>
-            {item.description && (
-              <div className="score-item-description">{item.description}</div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {scoreItems.length === 0 && (
