@@ -1,0 +1,121 @@
+.game-score-breakdown {
+  min-height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-score-breakdown .result-banner {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-score-breakdown .result-banner .emoji {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.game-score-breakdown .result-banner h1 {
+  font-size: 24px;
+  margin-bottom: 0;
+}
+
+.game-score-breakdown .result-banner.winner h1 {
+  color: var(--secondary);
+}
+
+.breakdown-section {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.breakdown-section h3 {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--surface-light);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-label {
+  font-size: 14px;
+}
+
+.breakdown-label .maki-indicator {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.breakdown-value {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.breakdown-value .bonus {
+  font-size: 12px;
+  color: var(--secondary);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.breakdown-value.positive {
+  color: var(--secondary);
+}
+
+.breakdown-value.negative {
+  color: #e74c3c;
+}
+
+.breakdown-row.subtotal {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--surface-light);
+  border-bottom: none;
+}
+
+.breakdown-row.subtotal .breakdown-label,
+.breakdown-row.subtotal .breakdown-value {
+  font-weight: 600;
+}
+
+.total-section {
+  background: linear-gradient(135deg, var(--surface), var(--surface-light));
+}
+
+.breakdown-row.total {
+  border-bottom: none;
+  padding: 4px 0;
+}
+
+.breakdown-row.total .breakdown-label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.breakdown-row.total .breakdown-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--secondary);
+}
+
+.game-score-breakdown .waiting-text {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding: 16px 0;
+}

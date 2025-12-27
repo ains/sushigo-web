@@ -5,6 +5,7 @@ import { SeatSelect } from './SeatSelect';
 import { PlayerHand } from './PlayerHand';
 import { WaitingScreen } from './WaitingScreen';
 import { RoundScoreBreakdown } from './RoundScoreBreakdown';
+import { GameScoreBreakdown } from './GameScoreBreakdown';
 import './MobileView.css';
 
 export function MobileView() {
@@ -20,34 +21,22 @@ export function MobileView() {
   }
 
   // Game ended
-  if (finalScores && winner) {
+  if (finalScores && winner && myPlayer) {
     const myRank = finalScores.findIndex(s => s.playerId === myPlayerId) + 1;
     const isWinner = myPlayerId === winner;
     const myScore = finalScores.find(s => s.playerId === myPlayerId);
 
-    return (
-      <div className="mobile-view game-end">
-        <div className={`result-banner ${isWinner ? 'winner' : ''}`}>
-          {isWinner ? (
-            <>
-              <span className="emoji">🏆</span>
-              <h1>You Win!</h1>
-            </>
-          ) : (
-            <>
-              <span className="emoji">{myRank === 2 ? '🥈' : myRank === 3 ? '🥉' : '😢'}</span>
-              <h1>#{myRank} Place</h1>
-            </>
-          )}
-        </div>
-        <div className="my-score">
-          <span className="score-label">Your Score</span>
-          <span className="score-value">{myScore?.totalScore || 0}</span>
-          <span className="pudding-count">🍮 {myScore?.puddings || 0} puddings</span>
-        </div>
-        <p className="waiting-text">Waiting for host to restart...</p>
-      </div>
-    );
+    if (myScore) {
+      return (
+        <GameScoreBreakdown
+          player={myPlayer}
+          allPlayers={gameState.players}
+          finalScore={myScore}
+          isWinner={isWinner}
+          rank={myRank}
+        />
+      );
+    }
   }
 
   // In lobby - seat selection or waiting
