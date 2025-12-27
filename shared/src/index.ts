@@ -51,6 +51,12 @@ export type ViewMode = 'tablet' | 'mobile';
 // Socket events - Server to Client
 export interface ServerToClientEvents {
   'game:created': (data: { gameCode: string; gameId: string; gameState: PublicGameState }) => void;
+  'game:createdAndJoined': (data: {
+    gameCode: string;
+    gameId: string;
+    gameState: PublicGameState;
+    playerId: string;
+  }) => void;
   'game:error': (data: { message: string }) => void;
   'player:joined': (data: {
     player: PublicPlayer;
@@ -79,6 +85,7 @@ export interface ServerToClientEvents {
 // Socket events - Client to Server
 export interface ClientToServerEvents {
   'game:create': () => void;
+  'game:createAndJoin': (data: { name: string }) => void;
   'game:join': (data: { code: string; name: string }) => void;
   'game:spectate': (data: { code: string }) => void;
   'game:start': () => void;

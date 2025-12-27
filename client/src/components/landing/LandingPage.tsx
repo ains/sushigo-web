@@ -24,7 +24,16 @@ export function LandingPage() {
         <h1 className="landing-title">Sushi Go!</h1>
 
         <div className="landing-section">
-          <h2>Start a New Game</h2>
+          <h2>Remote Play</h2>
+          <p className="section-description">Play online with friends on separate devices</p>
+          <button className="btn btn-success btn-large" onClick={() => navigate('/remote')}>
+            Start Remote Game
+          </button>
+        </div>
+
+        <div className="landing-section">
+          <h2>Local Play</h2>
+          <p className="section-description">Play together on shared screens</p>
           <div className="button-group">
             <button className="btn btn-primary btn-large" onClick={() => navigate('/tv')}>
               New Game (TV)

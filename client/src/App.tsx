@@ -4,6 +4,7 @@ import { TabletView } from './components/tablet/TabletView';
 import { TVView } from './components/tv/TVView';
 import { MobileView } from './components/mobile/MobileView';
 import { SpectatorView } from './components/spectator/SpectatorView';
+import { RemoteView } from './components/remote/RemoteView';
 import { DebugView } from './components/debug/DebugView';
 import { useGame } from './context/GameContext';
 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/tablet" element={<TabletView />} />
         <Route path="/tv" element={<TVView />} />
         <Route path="/spectate/:code" element={<SpectatorView />} />
+        <Route path="/remote/:code?" element={<RemoteView />} />
         <Route path="/join/:code?" element={<MobileView />} />
         <Route path="/debug/:view?" element={<DebugView />} />
       </Routes>

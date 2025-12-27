@@ -1,9 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGame } from '../../context/GameContext';
 import { Card } from '../shared/Card';
 import './PlayerHand.css';
 
-export function PlayerHand() {
+interface PlayerHandProps {
+  compact?: boolean;
+}
+
+export function PlayerHand({ compact = false }: PlayerHandProps) {
   const { hand, selectedCards, toggleCardSelection, confirmSelection, gameState, myPlayerId } =
     useGame();
   const [isPassingCards, setIsPassingCards] = useState(false);
@@ -65,7 +69,7 @@ export function PlayerHand() {
 
   const canConfirm = selectedCards.length > 0 && !isPassingCards;
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (!canConfirm) return;
 
     // Set the pass direction for animation
@@ -81,33 +85,53 @@ export function PlayerHand() {
         setIsPassingCards(false);
       }, 100);
     }, 1100); // Animation duration (600ms) + max stagger delay (450ms)
-  };
+  }, [canConfirm, isClockwise, confirmSelection]);
+
+  // Keyboard shortcut: space bar to confirm
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && canConfirm) {
+        e.preventDefault();
+        handleConfirm();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canConfirm, handleConfirm]);
 
   return (
-    <div className="player-hand">
-      <div className="hand-header">
-        <div className="round-info">
-          <span>Round {gameState?.currentRound || 1}</span>
-          <span className="separator">•</span>
-          <span>Turn {gameState?.currentTurn || 1}</span>
-        </div>
-        {hasChopsticks && <div className="chopsticks-notice">🥢 You can play 2 cards!</div>}
-      </div>
-
-      {numPlayers > 1 && (
-        <div className="pass-info">
-          <span className="pass-direction">
-            {isClockwise ? '↻' : '↺'} Passing {isClockwise ? 'clockwise' : 'counter-clockwise'}
-          </span>
-          <div className="pass-details">
-            <span>
-              → Remaining cards will be passed to <strong>{passToPlayer?.name}</strong>
-            </span>
+    <div className={`player-hand ${compact ? 'compact' : ''}`}>
+      {!compact && (
+        <>
+          <div className="hand-header">
+            <div className="round-info">
+              <span>Round {gameState?.currentRound || 1}</span>
+              <span className="separator">•</span>
+              <span>Turn {gameState?.currentTurn || 1}</span>
+            </div>
+            {hasChopsticks && <div className="chopsticks-notice">🥢 You can play 2 cards!</div>}
           </div>
-        </div>
+
+          {numPlayers > 1 && (
+            <div className="pass-info">
+              <span className="pass-direction">
+                {isClockwise ? '↻' : '↺'} Passing {isClockwise ? 'clockwise' : 'counter-clockwise'}
+              </span>
+              <div className="pass-details">
+                <span>
+                  → Remaining cards will be passed to <strong>{passToPlayer?.name}</strong>
+                </span>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
-      <div className="instruction">Select {maxCards === 2 ? '1 or 2 cards' : 'a card'} to play</div>
+      <div className="instruction">
+        Select {maxCards === 2 ? '1 or 2 cards' : 'a card'} to play
+        {compact && hasChopsticks && ' 🥢'}
+      </div>
 
       <div className="cards-container">
         {hand.map((card) => {

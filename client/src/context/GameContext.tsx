@@ -36,9 +36,11 @@ interface GameContextType {
   roundScores: RoundScore[] | null;
   finalScores: { playerId: string; totalScore: number; puddings: number }[] | null;
   winner: string | null;
+  isHost: boolean;
 
   // Actions
   createGame: () => void;
+  createAndJoinGame: (name: string) => void;
   joinGame: (code: string, name: string) => void;
   spectateGame: (code: string) => void;
   startGame: () => void;
@@ -69,6 +71,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     { playerId: string; totalScore: number; puddings: number }[] | null
   >(null);
   const [winner, setWinner] = useState<string | null>(null);
+  const [isHost, setIsHost] = useState(false);
 
   useEffect(() => {
     // In development, connect to the server on port 3000
@@ -92,6 +95,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     newSocket.on('game:created', ({ gameCode: code, gameState: state }) => {
       setGameCode(code);
       setGameState(state);
+    });
+
+    newSocket.on('game:createdAndJoined', ({ gameCode: code, gameState: state, playerId }) => {
+      setGameCode(code);
+      setGameState(state);
+      setMyPlayerId(playerId);
+      myPlayerIdRef.current = playerId;
+      setIsHost(true);
     });
 
     newSocket.on('game:error', ({ message }) => {
@@ -167,6 +178,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const createGame = useCallback(() => {
     socket?.emit('game:create');
   }, [socket]);
+
+  const createAndJoinGame = useCallback(
+    (name: string) => {
+      socket?.emit('game:createAndJoin', { name });
+    },
+    [socket]
+  );
 
   const joinGame = useCallback(
     (code: string, name: string) => {
@@ -271,7 +289,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         roundScores,
         finalScores,
         winner,
+        isHost,
         createGame,
+        createAndJoinGame,
         joinGame,
         spectateGame,
         startGame,
