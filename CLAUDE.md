@@ -88,6 +88,35 @@ Socket.IO handles all game events. Key event flow:
 - Pudding uses comparative scoring across the entire game (most/least across players)
 - Wasabi triples the next Nigiri played
 
+## Deployment
+
+### Render
+
+The app is configured for Render deployment via `render.yaml`:
+
+1. Connect your GitHub repo to Render
+2. Render will auto-detect `render.yaml` and configure the service
+3. Deploy
+
+**Environment variables** (set automatically by render.yaml):
+- `NODE_ENV=production` - Enables static file serving
+- `PORT` - Set automatically by Render
+
+### Manual Deployment
+
+```bash
+npm install
+npm run build
+NODE_ENV=production npm start
+```
+
+## CI/CD
+
+GitHub Actions runs on push/PR to main (`.github/workflows/ci.yml`):
+- Formatting check (Prettier)
+- Tests
+- Build
+
 ## Development Notes
 
 - Server serves built client from `/client/dist` in production
