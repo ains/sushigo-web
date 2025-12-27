@@ -3,6 +3,7 @@ import { useGame } from "../../context/GameContext";
 import { QRCodeDisplay } from "../tablet/QRCodeDisplay";
 import { SeatLayout } from "../tablet/SeatLayout";
 import { TVGameBoard } from "./TVGameBoard";
+import { TVGameEnd } from "./TVGameEnd";
 import "./TVView.css";
 
 export function TVView() {
@@ -40,38 +41,8 @@ export function TVView() {
   const canStart = allSeated;
 
   // Game ended
-  if (finalScores && winner) {
-    const winnerPlayer = gameState?.players.find((p) => p.id === winner);
-    return (
-      <div className="tv-view game-end">
-        <h1>Game Over!</h1>
-        <div className="winner-announcement">
-          <span className="winner-emoji">🏆</span>
-          <h2>{winnerPlayer?.name || "Unknown"} Wins!</h2>
-        </div>
-        <div className="final-scores">
-          {finalScores.map((score, index) => {
-            const player = gameState?.players.find(
-              (p) => p.id === score.playerId
-            );
-            return (
-              <div
-                key={score.playerId}
-                className={`score-row ${index === 0 ? "winner" : ""}`}
-              >
-                <span className="rank">{index + 1}</span>
-                <span className="name">{player?.name}</span>
-                <span className="puddings">🍮 {score.puddings}</span>
-                <span className="score">{score.totalScore} pts</span>
-              </div>
-            );
-          })}
-        </div>
-        <button className="btn btn-primary btn-large" onClick={restartGame}>
-          Play Again
-        </button>
-      </div>
-    );
+  if (finalScores && winner && gameState) {
+    return <TVGameEnd players={gameState.players} onPlayAgain={restartGame} />;
   }
 
   // Lobby - waiting for players

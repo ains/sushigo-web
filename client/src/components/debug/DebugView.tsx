@@ -4,6 +4,7 @@ import { RoundScoreBreakdown } from '../mobile/RoundScoreBreakdown';
 import { GameScoreBreakdown } from '../mobile/GameScoreBreakdown';
 import { GameBoard } from '../tablet/GameBoard';
 import { TVGameBoard } from '../tv/TVGameBoard';
+import { TVGameEnd } from '../tv/TVGameEnd';
 import {
   createMockGameState,
   createMockHand,
@@ -169,6 +170,15 @@ function DebugTabletView({ view }: { view: ViewType }) {
 function DebugTVView({ view }: { view: ViewType }) {
   const gameState = createMockGameState(view);
 
+  if (view === 'game-end') {
+    return (
+      <div className="debug-tv-container">
+        <div className="debug-info">Debug: {view} (TV View)</div>
+        <TVGameEnd players={gameState.players} />
+      </div>
+    );
+  }
+
   return (
     <div className="debug-tv-container">
       <div className="debug-info">Debug: {view} (TV View)</div>
@@ -182,12 +192,6 @@ function DebugTVView({ view }: { view: ViewType }) {
         <div className="round-end-overlay">
           <h2>Round {gameState.currentRound} Complete!</h2>
           <p>Next round starting soon...</p>
-        </div>
-      )}
-      {view === 'game-end' && (
-        <div className="round-end-overlay">
-          <h2>Game Over!</h2>
-          <p>Winner: {gameState.players.sort((a, b) => b.score - a.score)[0].name}</p>
         </div>
       )}
     </div>

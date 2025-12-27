@@ -128,57 +128,82 @@
   margin-bottom: 16px;
 }
 
-.tv-view .winner-announcement h2 {
+.tv-view .winner-announcement h1 {
   font-size: 36px;
   color: var(--secondary);
+  margin-top: 0;
 }
 
-.tv-view .final-scores {
+/* Leaderboard table */
+.tv-view .leaderboard {
   background: var(--surface);
   border-radius: 16px;
   padding: 24px;
-  min-width: 400px;
+  max-width: 800px;
+  width: 100%;
 }
 
-.tv-view .score-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px;
-  border-radius: 8px;
+.tv-view .leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.tv-view .score-row.winner {
-  background: rgba(46, 204, 113, 0.2);
+.tv-view .leaderboard-table th,
+.tv-view .leaderboard-table td {
+  padding: 12px 16px;
+  text-align: center;
 }
 
-.tv-view .score-row .rank {
-  width: 32px;
-  height: 32px;
-  background: var(--surface-light);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.tv-view .leaderboard-table th {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--surface-light);
+}
+
+.tv-view .leaderboard-table td {
+  font-size: 18px;
+  border-bottom: 1px solid var(--surface-light);
+}
+
+.tv-view .leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tv-view .leaderboard-table tr.winner {
+  background: rgba(46, 204, 113, 0.15);
+}
+
+.tv-view .leaderboard-table .col-rank {
+  width: 50px;
   font-weight: bold;
 }
 
-.tv-view .score-row.winner .rank {
-  background: var(--secondary);
+.tv-view .leaderboard-table .col-name {
+  text-align: left;
+  font-weight: 500;
 }
 
-.tv-view .score-row .name {
-  flex: 1;
-  font-size: 18px;
-}
-
-.tv-view .score-row .puddings {
+.tv-view .leaderboard-table .col-round {
+  width: 60px;
   color: var(--text-muted);
 }
 
-.tv-view .score-row .score {
-  font-size: 20px;
+.tv-view .leaderboard-table .col-pudding {
+  width: 70px;
+}
+
+.tv-view .leaderboard-table .col-pudding.positive {
+  color: var(--secondary);
+}
+
+.tv-view .leaderboard-table .col-pudding.negative {
+  color: var(--error);
+}
+
+.tv-view .leaderboard-table .col-total {
+  width: 80px;
   font-weight: bold;
-  min-width: 80px;
-  text-align: right;
+  font-size: 22px;
+  color: var(--secondary);
 }
