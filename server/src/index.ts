@@ -47,12 +47,22 @@ app.use(express.json());
 
 // API endpoint to get server info (for QR code generation)
 app.get('/api/server-info', (req, res) => {
-  const clientPort = process.env.NODE_ENV === 'production' ? PORT : 5173;
-  res.json({
-    ip: LOCAL_IP,
-    port: clientPort,
-    url: `http://${LOCAL_IP}:${clientPort}`,
-  });
+  if (process.env.NODE_ENV === 'production') {
+    // In production, use the public URL from Render or derive from request
+    const publicUrl = process.env.RENDER_EXTERNAL_URL || `https://${req.get('host')}`;
+    res.json({
+      ip: req.get('host') || 'unknown',
+      port: 443,
+      url: publicUrl,
+    });
+  } else {
+    // In development, use local network IP for multi-device play
+    res.json({
+      ip: LOCAL_IP,
+      port: 5173,
+      url: `http://${LOCAL_IP}:5173`,
+    });
+  }
 });
 
 // Health check
