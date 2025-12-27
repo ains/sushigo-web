@@ -126,17 +126,24 @@ export function setupSocketHandlers(io: GameServer): void {
         return;
       }
 
+      // Allow host to reclaim game if their socket reconnected
       if (game.hostSocketId !== socket.id) {
-        socket.emit('game:error', {
-          message: 'Only the host can start the game',
-        });
-        return;
+        // Check if this socket is a player who is also the original host
+        const player = game.getPlayerBySocket(socket.id);
+        if (player) {
+          // Update host socket ID to current socket
+          game.updateHostSocket(socket.id);
+        } else {
+          socket.emit('game:error', {
+            message: 'Only the host can start the game',
+          });
+          return;
+        }
       }
 
-      if (!game.start()) {
-        socket.emit('game:error', {
-          message: 'Cannot start game. Need at least 2 players.',
-        });
+      const error = game.start();
+      if (error) {
+        socket.emit('game:error', { message: error });
         return;
       }
 

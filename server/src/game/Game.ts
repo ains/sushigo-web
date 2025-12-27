@@ -117,11 +117,18 @@ export class Game {
     return this.state.players.every((p) => p.seatIndex !== null);
   }
 
-  // Start the game
-  start(): boolean {
-    if (this.state.phase !== 'lobby') return false;
-    if (this.state.players.length < 2) return false;
-    if (!this.allPlayersSeated()) return false;
+  // Start the game - returns error message or null on success
+  start(): string | null {
+    if (this.state.phase !== 'lobby') {
+      return 'The game has already started';
+    }
+    if (this.state.players.length < 2) {
+      return `Need at least 2 players (currently ${this.state.players.length})`;
+    }
+    if (!this.allPlayersSeated()) {
+      const unseated = this.state.players.filter((p) => p.seatIndex === null);
+      return `All players must be seated (${unseated.map((p) => p.name).join(', ')} not seated)`;
+    }
 
     this.state.phase = 'playing';
     this.state.currentRound = 1;
@@ -129,7 +136,12 @@ export class Game {
     this.state.cardsPerHand = CARDS_PER_PLAYER[this.state.players.length] || 8;
 
     this.startRound();
-    return true;
+    return null;
+  }
+
+  // Update host socket ID (for reconnection)
+  updateHostSocket(newSocketId: string): void {
+    this.state.hostSocketId = newSocketId;
   }
 
   // Start a new round
