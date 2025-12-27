@@ -1,5 +1,6 @@
 import { Card as CardType, PublicPlayer } from "../../types";
 import { Card } from "../shared/Card";
+import { countMaki, DUMPLING_POINTS, NIGIRI_VALUES } from "sushigo-shared";
 import "./RoundScoreBreakdown.css";
 
 interface ScoreItem {
@@ -20,15 +21,6 @@ interface MakiRanking {
   playerName: string;
   makiCount: number;
   points: number;
-}
-
-function countMaki(cards: CardType[]): number {
-  return cards.reduce((sum, card) => {
-    if (card.type === "maki1") return sum + 1;
-    if (card.type === "maki2") return sum + 2;
-    if (card.type === "maki3") return sum + 3;
-    return sum;
-  }, 0);
 }
 
 function calculateMakiRankings(
@@ -145,8 +137,7 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
 
   // Dumplings: 1/3/6/10/15
   if (dumplings.length > 0) {
-    const dumplingPoints = [0, 1, 3, 6, 10, 15];
-    const points = dumplingPoints[Math.min(dumplings.length, 5)];
+    const points = DUMPLING_POINTS[Math.min(dumplings.length, 5)];
     items.push({
       label: "Dumplings",
       cards: dumplings,
@@ -159,12 +150,7 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
 
   // Wasabi + Nigiri combos
   for (const { wasabi, nigiri } of wasabiNigiriPairs) {
-    const basePoints =
-      nigiri.type === "nigiri_egg"
-        ? 1
-        : nigiri.type === "nigiri_salmon"
-        ? 2
-        : 3;
+    const basePoints = NIGIRI_VALUES[nigiri.type];
     const points = basePoints * 3;
     const nigiriName =
       nigiri.type === "nigiri_egg"
@@ -183,10 +169,7 @@ function calculateScoreBreakdown(cards: CardType[]): ScoreItem[] {
   // Standalone nigiris
   if (standaloneNigiris.length > 0) {
     const points = standaloneNigiris.reduce((sum, card) => {
-      if (card.type === "nigiri_egg") return sum + 1;
-      if (card.type === "nigiri_salmon") return sum + 2;
-      if (card.type === "nigiri_squid") return sum + 3;
-      return sum;
+      return sum + (NIGIRI_VALUES[card.type] || 0);
     }, 0);
     items.push({
       label: "Nigiri",

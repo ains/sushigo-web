@@ -11,6 +11,15 @@ export interface PlayerPuddingData {
   puddings: number;
 }
 
+// Scoring constants
+export const DUMPLING_POINTS = [0, 1, 3, 6, 10, 15] as const;
+
+export const NIGIRI_VALUES: Record<string, number> = {
+  'nigiri_squid': 3,
+  'nigiri_salmon': 2,
+  'nigiri_egg': 1
+};
+
 // Count cards of specific types
 function countCardType(cards: Card[], ...types: string[]): number {
   return cards.filter(c => types.includes(c.type)).length;
@@ -31,8 +40,7 @@ export function scoreSashimi(cards: Card[]): number {
 // Score dumplings: 1/3/6/10/15 points for 1/2/3/4/5+ dumplings
 export function scoreDumplings(cards: Card[]): number {
   const count = countCardType(cards, 'dumpling');
-  const scores = [0, 1, 3, 6, 10, 15];
-  return scores[Math.min(count, 5)];
+  return DUMPLING_POINTS[Math.min(count, 5)];
 }
 
 // Score nigiri with wasabi
@@ -41,19 +49,13 @@ export function scoreNigiri(cards: Card[]): number {
   let score = 0;
   let wasabiCount = countCardType(cards, 'wasabi');
 
-  const nigiriValues: Record<string, number> = {
-    'nigiri_squid': 3,
-    'nigiri_salmon': 2,
-    'nigiri_egg': 1
-  };
-
   // Get all nigiri sorted by value (highest first to maximize wasabi usage)
   const nigiriCards = cards
     .filter(c => c.type.startsWith('nigiri_'))
-    .sort((a, b) => nigiriValues[b.type] - nigiriValues[a.type]);
+    .sort((a, b) => NIGIRI_VALUES[b.type] - NIGIRI_VALUES[a.type]);
 
   for (const nigiri of nigiriCards) {
-    const baseValue = nigiriValues[nigiri.type];
+    const baseValue = NIGIRI_VALUES[nigiri.type];
     if (wasabiCount > 0) {
       score += baseValue * 3;
       wasabiCount--;
@@ -169,4 +171,57 @@ export function scorePuddingsForPlayers(players: PlayerPuddingData[]): Map<strin
   }
 
   return scores;
+}
+
+// Calculate a single player's maki bonus given all players' maki counts
+export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[]): number {
+  if (playerMaki === 0) return 0;
+
+  const sorted = [...allPlayerMakis].sort((a, b) => b - a);
+  const highest = sorted[0];
+  const firstPlaceCount = allPlayerMakis.filter(m => m === highest).length;
+
+  if (playerMaki === highest) {
+    if (firstPlaceCount > 1) {
+      // Split 6 points among tied players
+      return Math.floor(6 / firstPlaceCount);
+    }
+    return 6;
+  }
+
+  // Check for second place (only if there's a single first place winner)
+  if (firstPlaceCount === 1) {
+    const secondHighest = sorted.find(m => m < highest) ?? 0;
+    if (playerMaki === secondHighest && secondHighest > 0) {
+      const secondPlaceCount = allPlayerMakis.filter(m => m === secondHighest).length;
+      return Math.floor(3 / secondPlaceCount);
+    }
+  }
+
+  return 0;
+}
+
+// Calculate a single player's pudding bonus given all players' pudding counts
+export function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings: number[]): number {
+  if (allPlayerPuddings.length === 0) return 0;
+
+  const sorted = [...allPlayerPuddings].sort((a, b) => b - a);
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+
+  let bonus = 0;
+
+  // Most puddings: +6 (split if tied)
+  if (playerPuddings === highest) {
+    const tiedCount = allPlayerPuddings.filter(p => p === highest).length;
+    bonus += Math.floor(6 / tiedCount);
+  }
+
+  // Least puddings: -6 (split if tied), but not in 2-player games
+  if (allPlayerPuddings.length > 2 && playerPuddings === lowest && lowest < highest) {
+    const tiedCount = allPlayerPuddings.filter(p => p === lowest).length;
+    bonus -= Math.floor(6 / tiedCount);
+  }
+
+  return bonus;
 }

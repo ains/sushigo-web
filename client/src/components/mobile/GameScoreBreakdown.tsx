@@ -1,5 +1,5 @@
 import { PublicPlayer } from '../../types';
-import { scoreRoundCards, countMaki } from 'sushigo-shared';
+import { scoreRoundCards, countMaki, calculateMakiBonus, calculatePuddingBonus } from 'sushigo-shared';
 import './GameScoreBreakdown.css';
 
 interface GameScoreBreakdownProps {
@@ -7,59 +7,6 @@ interface GameScoreBreakdownProps {
   allPlayers: PublicPlayer[];
   isWinner: boolean;
   rank: number;
-}
-
-function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[]): number {
-  const sorted = [...allPlayerMakis].sort((a, b) => b - a);
-  const highest = sorted[0];
-  const secondHighest = sorted.find(m => m < highest) ?? 0;
-
-  if (playerMaki === 0) return 0;
-
-  // Count ties for first place
-  const firstPlaceCount = allPlayerMakis.filter(m => m === highest).length;
-
-  if (playerMaki === highest) {
-    if (firstPlaceCount > 1) {
-      // Split 6 points among tied players
-      return Math.floor(6 / firstPlaceCount);
-    }
-    return 6;
-  }
-
-  if (playerMaki === secondHighest && firstPlaceCount === 1) {
-    // Count ties for second place
-    const secondPlaceCount = allPlayerMakis.filter(m => m === secondHighest).length;
-    if (secondPlaceCount > 1) {
-      // Split 3 points among tied players
-      return Math.floor(3 / secondPlaceCount);
-    }
-    return 3;
-  }
-
-  return 0;
-}
-
-function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings: number[]): number {
-  const sorted = [...allPlayerPuddings].sort((a, b) => b - a);
-  const highest = sorted[0];
-  const lowest = sorted[sorted.length - 1];
-
-  let bonus = 0;
-
-  // Most puddings: +6 (split if tied)
-  if (playerPuddings === highest) {
-    const tiedCount = allPlayerPuddings.filter(p => p === highest).length;
-    bonus += Math.floor(6 / tiedCount);
-  }
-
-  // Least puddings: -6 (split if tied), but not in 2-player games
-  if (allPlayerPuddings.length > 2 && playerPuddings === lowest && lowest < highest) {
-    const tiedCount = allPlayerPuddings.filter(p => p === lowest).length;
-    bonus -= Math.floor(6 / tiedCount);
-  }
-
-  return bonus;
 }
 
 export function GameScoreBreakdown({
