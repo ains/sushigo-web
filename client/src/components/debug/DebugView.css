@@ -1,0 +1,298 @@
+.debug-index {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.debug-index h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.debug-index p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.debug-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.debug-link {
+  display: block;
+  background: var(--surface);
+  padding: 16px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.debug-link:hover {
+  background: var(--surface-light);
+  transform: translateX(4px);
+}
+
+.debug-link-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.debug-link-desc {
+  display: block;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Debug view layout */
+.debug-view {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.debug-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface-light);
+  flex-wrap: wrap;
+}
+
+.debug-back {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.debug-back:hover {
+  color: var(--text);
+}
+
+.debug-mode-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--background);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.debug-mode-switcher button {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.debug-mode-switcher button:hover {
+  color: var(--text);
+}
+
+.debug-mode-switcher button.active {
+  background: var(--primary);
+  color: white;
+}
+
+.debug-view-switcher {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.debug-view-link {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--background);
+  transition: background 0.2s, color 0.2s;
+}
+
+.debug-view-link:hover {
+  color: var(--text);
+}
+
+.debug-view-link.active {
+  background: var(--secondary);
+  color: white;
+}
+
+/* Debug content area */
+.debug-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.debug-info {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Mobile container */
+.debug-mobile-container {
+  flex: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+}
+
+.debug-content-mobile {
+  background: var(--surface-light);
+}
+
+/* Tablet container */
+.debug-tablet-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* TV container */
+.debug-tv-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Round end overlay for tablet/tv */
+.debug-tablet-container .round-end-overlay,
+.debug-tv-container .round-end-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.debug-tablet-container .round-end-overlay h2,
+.debug-tv-container .round-end-overlay h2 {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: var(--secondary);
+}
+
+.debug-tablet-container .round-end-overlay p,
+.debug-tv-container .round-end-overlay p {
+  font-size: 24px;
+  color: var(--text-muted);
+}
+
+/* Import PlayerHand styles for mock component */
+.debug-mobile-container .player-hand {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  padding-bottom: 100px;
+}
+
+.debug-mobile-container .hand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.debug-mobile-container .round-info {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.debug-mobile-container .round-info .separator {
+  margin: 0 8px;
+}
+
+.debug-mobile-container .pass-info {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.debug-mobile-container .pass-direction {
+  display: block;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.debug-mobile-container .pass-details {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.debug-mobile-container .pass-details strong {
+  color: var(--text);
+}
+
+.debug-mobile-container .instruction {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.debug-mobile-container .cards-container {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-content: flex-start;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.debug-mobile-container .confirm-section {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  padding: 16px 20px;
+  background: linear-gradient(transparent, var(--background) 30%);
+  padding-top: 40px;
+}
+
+.debug-mobile-container .confirm-btn {
+  width: 100%;
+}

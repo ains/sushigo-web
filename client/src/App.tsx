@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { TabletView } from './components/tablet/TabletView';
 import { TVView } from './components/tv/TVView';
 import { MobileView } from './components/mobile/MobileView';
+import { DebugView } from './components/debug/DebugView';
 import { useGame } from './context/GameContext';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<TabletView />} />
         <Route path="/tv" element={<TVView />} />
         <Route path="/join/:code?" element={<MobileView />} />
+        <Route path="/debug/:view?" element={<DebugView />} />
       </Routes>
     </div>
   );
