@@ -12,9 +12,12 @@
     }
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "vitest": "^2.1.0"
   }
 }
