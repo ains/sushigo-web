@@ -24,19 +24,15 @@ export function MobileView() {
   if (finalScores && winner && myPlayer) {
     const myRank = finalScores.findIndex(s => s.playerId === myPlayerId) + 1;
     const isWinner = myPlayerId === winner;
-    const myScore = finalScores.find(s => s.playerId === myPlayerId);
 
-    if (myScore) {
-      return (
-        <GameScoreBreakdown
-          player={myPlayer}
-          allPlayers={gameState.players}
-          finalScore={myScore}
-          isWinner={isWinner}
-          rank={myRank}
-        />
-      );
-    }
+    return (
+      <GameScoreBreakdown
+        player={myPlayer}
+        allPlayers={gameState.players}
+        isWinner={isWinner}
+        rank={myRank}
+      />
+    );
   }
 
   // In lobby - seat selection or waiting

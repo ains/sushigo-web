@@ -57,7 +57,6 @@ function DebugMobileView({ view }: { view: ViewType }) {
 
   if (view === 'game-end') {
     const finalScores = createMockFinalScores(gameState.players);
-    const myScore = finalScores.find(s => s.playerId === myPlayer.id)!;
     const myRank = finalScores.findIndex(s => s.playerId === myPlayer.id) + 1;
     const isWinner = myRank === 1;
 
@@ -67,7 +66,6 @@ function DebugMobileView({ view }: { view: ViewType }) {
         <GameScoreBreakdown
           player={myPlayer}
           allPlayers={gameState.players}
-          finalScore={myScore}
           isWinner={isWinner}
           rank={myRank}
         />

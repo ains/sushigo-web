@@ -5,7 +5,6 @@ import './GameScoreBreakdown.css';
 interface GameScoreBreakdownProps {
   player: PublicPlayer;
   allPlayers: PublicPlayer[];
-  finalScore: { playerId: string; totalScore: number; puddings: number };
   isWinner: boolean;
   rank: number;
 }
@@ -75,15 +74,13 @@ function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings: number
 export function GameScoreBreakdown({
   player,
   allPlayers,
-  finalScore,
   isWinner,
   rank,
 }: GameScoreBreakdownProps) {
   // Calculate round-by-round scores
   const roundScores = player.playedCards.map((cards, index) => {
     const points = calculateRoundPoints(cards);
-    const makiCount = countMaki(cards);
-    return { round: index + 1, points, makiCount };
+    return { round: index + 1, points };
   });
 
   // Calculate total maki per player for each round and sum up bonuses
@@ -99,6 +96,8 @@ export function GameScoreBreakdown({
   // Calculate pudding bonus
   const allPuddings = allPlayers.map(p => p.puddings);
   const puddingBonus = calculatePuddingBonus(player.puddings, allPuddings);
+
+  const calculatedTotal = totalRoundPoints + totalMakiBonus + puddingBonus;
 
   return (
     <div className="game-score-breakdown">
@@ -120,17 +119,9 @@ export function GameScoreBreakdown({
         <h3>Round Scores</h3>
         {roundScores.map((round, index) => (
           <div key={round.round} className="breakdown-row">
-            <span className="breakdown-label">
-              Round {round.round}
-              {round.makiCount > 0 && (
-                <span className="maki-indicator"> (🍱 {round.makiCount})</span>
-              )}
-            </span>
+            <span className="breakdown-label">Round {round.round}</span>
             <span className="breakdown-value">
-              {round.points}
-              {makiBonusPerRound[index] > 0 && (
-                <span className="bonus"> +{makiBonusPerRound[index]} maki</span>
-              )}
+              {round.points + makiBonusPerRound[index]}
             </span>
           </div>
         ))}
@@ -155,7 +146,7 @@ export function GameScoreBreakdown({
       <div className="breakdown-section total-section">
         <div className="breakdown-row total">
           <span className="breakdown-label">Final Score</span>
-          <span className="breakdown-value">{finalScore.totalScore}</span>
+          <span className="breakdown-value">{calculatedTotal}</span>
         </div>
       </div>
 
