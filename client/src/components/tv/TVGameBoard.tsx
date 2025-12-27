@@ -1,6 +1,6 @@
 import { PublicPlayer } from '../../types';
 import { Card } from '../shared/Card';
-import { calculateRoundPoints } from '../../utils/scoring';
+import { scoreRoundCards } from 'sushigo-shared';
 import { groupPlayedCards, CardGroup } from '../../utils/cardGrouping';
 import './TVGameBoard.css';
 
@@ -34,7 +34,7 @@ function CardGroupDisplay({ group }: { group: CardGroup }) {
 
 function PlayerBoard({ player, currentRound }: PlayerBoardProps) {
   const roundCards = player.playedCards[currentRound - 1] || [];
-  const roundPoints = calculateRoundPoints(roundCards);
+  const roundPoints = scoreRoundCards(roundCards);
   const cardGroups = groupPlayedCards(roundCards);
 
   return (

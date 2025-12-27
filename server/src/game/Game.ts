@@ -1,6 +1,13 @@
 import { Card, GameState, Player, GamePhase, PublicGameState, PublicPlayer, CARDS_PER_PLAYER } from '../types/index.js';
 import { Deck } from './Deck.js';
-import { scorePlayerRound, scoreMakiForPlayers, scorePuddingsForPlayers, countPuddingsInCards } from './scoring.js';
+import {
+  scoreRoundCards,
+  scoreMakiForPlayers,
+  scorePuddingsForPlayers,
+  countPuddings,
+  type PlayerMakiData,
+  type PlayerPuddingData
+} from 'sushigo-shared';
 
 export class Game {
   private state: GameState;
@@ -190,7 +197,7 @@ export class Game {
       player.playedCards[this.state.currentRound - 1].push(...selectedCards);
 
       // Count puddings
-      player.puddings += countPuddingsInCards(selectedCards);
+      player.puddings += countPuddings(selectedCards);
 
       // Remove selected cards from hand
       player.hand = player.hand.filter(c => !selectedCards.some(sc => sc.id === c.id));
@@ -284,11 +291,16 @@ export class Game {
 
     // Score individual player cards
     for (const player of this.state.players) {
-      player.score += scorePlayerRound(player, round);
+      const roundCards = player.playedCards[round - 1] || [];
+      player.score += scoreRoundCards(roundCards);
     }
 
     // Score maki (comparative)
-    const makiScores = scoreMakiForPlayers(this.state.players, round);
+    const makiData: PlayerMakiData[] = this.state.players.map(p => ({
+      id: p.id,
+      roundCards: p.playedCards[round - 1] || []
+    }));
+    const makiScores = scoreMakiForPlayers(makiData);
     for (const [playerId, score] of makiScores) {
       const player = this.state.players.find(p => p.id === playerId);
       if (player) player.score += score;
@@ -298,7 +310,11 @@ export class Game {
   // End the game
   private endGame(): 'game_end' {
     // Score puddings
-    const puddingScores = scorePuddingsForPlayers(this.state.players);
+    const puddingData: PlayerPuddingData[] = this.state.players.map(p => ({
+      id: p.id,
+      puddings: p.puddings
+    }));
+    const puddingScores = scorePuddingsForPlayers(puddingData);
     for (const [playerId, score] of puddingScores) {
       const player = this.state.players.find(p => p.id === playerId);
       if (player) player.score += score;
@@ -310,9 +326,10 @@ export class Game {
 
   // Get round scores for display
   getRoundScores(): { playerId: string; roundScore: number; totalScore: number }[] {
+    const round = this.state.currentRound;
     return this.state.players.map(p => ({
       playerId: p.id,
-      roundScore: scorePlayerRound(p, this.state.currentRound),
+      roundScore: scoreRoundCards(p.playedCards[round - 1] || []),
       totalScore: p.score
     }));
   }

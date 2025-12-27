@@ -1,14 +1,5 @@
-import { calculateRoundPoints } from "../../utils/scoring";
-import { Card, PublicPlayer } from "../../types";
-
-function countMaki(cards: Card[]): number {
-  return cards.reduce((sum, card) => {
-    if (card.type === "maki1") return sum + 1;
-    if (card.type === "maki2") return sum + 2;
-    if (card.type === "maki3") return sum + 3;
-    return sum;
-  }, 0);
-}
+import { scoreRoundCards, countMaki } from 'sushigo-shared';
+import { PublicPlayer } from "../../types";
 
 function calculateMakiBonus(
   playerMaki: number,
@@ -81,7 +72,7 @@ function calculateLeaderboard(players: PublicPlayer[]): PlayerScoreBreakdown[] {
 
   const breakdowns = players.map((player) => {
     const roundScores = player.playedCards.map((cards, roundIndex) => {
-      const basePoints = calculateRoundPoints(cards);
+      const basePoints = scoreRoundCards(cards);
       const allMakis = players.map((p) =>
         countMaki(p.playedCards[roundIndex] || [])
       );

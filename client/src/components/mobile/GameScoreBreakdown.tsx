@@ -1,5 +1,5 @@
-import { PublicPlayer, Card } from '../../types';
-import { calculateRoundPoints } from '../../utils/scoring';
+import { PublicPlayer } from '../../types';
+import { scoreRoundCards, countMaki } from 'sushigo-shared';
 import './GameScoreBreakdown.css';
 
 interface GameScoreBreakdownProps {
@@ -7,15 +7,6 @@ interface GameScoreBreakdownProps {
   allPlayers: PublicPlayer[];
   isWinner: boolean;
   rank: number;
-}
-
-function countMaki(cards: Card[]): number {
-  return cards.reduce((sum, card) => {
-    if (card.type === 'maki1') return sum + 1;
-    if (card.type === 'maki2') return sum + 2;
-    if (card.type === 'maki3') return sum + 3;
-    return sum;
-  }, 0);
 }
 
 function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[]): number {
@@ -79,7 +70,7 @@ export function GameScoreBreakdown({
 }: GameScoreBreakdownProps) {
   // Calculate round-by-round scores
   const roundScores = player.playedCards.map((cards, index) => {
-    const points = calculateRoundPoints(cards);
+    const points = scoreRoundCards(cards);
     return { round: index + 1, points };
   });
 

@@ -1,11 +1,17 @@
-import { Card, Player } from '../types/index.js';
+import type { Card } from './index.js';
 
-// Get all cards played this round by a player
-function getRoundCards(player: Player, round: number): Card[] {
-  return player.playedCards[round - 1] || [];
+// Minimal player data needed for comparative scoring
+export interface PlayerMakiData {
+  id: string;
+  roundCards: Card[];
 }
 
-// Count cards of a specific type
+export interface PlayerPuddingData {
+  id: string;
+  puddings: number;
+}
+
+// Count cards of specific types
 function countCardType(cards: Card[], ...types: string[]): number {
   return cards.filter(c => types.includes(c.type)).length;
 }
@@ -29,19 +35,19 @@ export function scoreDumplings(cards: Card[]): number {
   return scores[Math.min(count, 5)];
 }
 
-// Score nigiri with wasabi: base value, tripled if wasabi available
+// Score nigiri with wasabi
+// Wasabi triples the next nigiri - we assign wasabi to highest value nigiri first
 export function scoreNigiri(cards: Card[]): number {
   let score = 0;
   let wasabiCount = countCardType(cards, 'wasabi');
 
-  // Sort cards so we process nigiri in order (highest value first for wasabi)
   const nigiriValues: Record<string, number> = {
     'nigiri_squid': 3,
     'nigiri_salmon': 2,
     'nigiri_egg': 1
   };
 
-  // Get all nigiri sorted by value (highest first)
+  // Get all nigiri sorted by value (highest first to maximize wasabi usage)
   const nigiriCards = cards
     .filter(c => c.type.startsWith('nigiri_'))
     .sort((a, b) => nigiriValues[b.type] - nigiriValues[a.type]);
@@ -59,7 +65,7 @@ export function scoreNigiri(cards: Card[]): number {
   return score;
 }
 
-// Count maki rolls
+// Count maki rolls in cards
 export function countMaki(cards: Card[]): number {
   let count = 0;
   for (const card of cards) {
@@ -70,14 +76,30 @@ export function countMaki(cards: Card[]): number {
   return count;
 }
 
+// Count puddings in cards
+export function countPuddings(cards: Card[]): number {
+  return countCardType(cards, 'pudding');
+}
+
+// Score all non-comparative cards for a round
+export function scoreRoundCards(cards: Card[]): number {
+  let score = 0;
+  score += scoreTempura(cards);
+  score += scoreSashimi(cards);
+  score += scoreDumplings(cards);
+  score += scoreNigiri(cards);
+  // Maki is scored separately via scoreMakiForPlayers
+  return score;
+}
+
 // Score maki for all players (comparative scoring)
-export function scoreMakiForPlayers(players: Player[], round: number): Map<string, number> {
+export function scoreMakiForPlayers(players: PlayerMakiData[]): Map<string, number> {
   const scores = new Map<string, number>();
 
   // Count maki for each player
   const makiCounts: { playerId: string; count: number }[] = players.map(p => ({
     playerId: p.id,
-    count: countMaki(getRoundCards(p, round))
+    count: countMaki(p.roundCards)
   }));
 
   // Sort by count descending
@@ -117,22 +139,8 @@ export function scoreMakiForPlayers(players: Player[], round: number): Map<strin
   return scores;
 }
 
-// Score a single player's round (excluding maki - that's comparative)
-export function scorePlayerRound(player: Player, round: number): number {
-  const cards = getRoundCards(player, round);
-
-  let score = 0;
-  score += scoreTempura(cards);
-  score += scoreSashimi(cards);
-  score += scoreDumplings(cards);
-  score += scoreNigiri(cards);
-  // Maki is scored separately via scoreMakiForPlayers
-
-  return score;
-}
-
 // Score puddings at end of game (comparative scoring)
-export function scorePuddingsForPlayers(players: Player[]): Map<string, number> {
+export function scorePuddingsForPlayers(players: PlayerPuddingData[]): Map<string, number> {
   const scores = new Map<string, number>();
 
   if (players.length === 0) return scores;
@@ -161,9 +169,4 @@ export function scorePuddingsForPlayers(players: Player[]): Map<string, number> 
   }
 
   return scores;
-}
-
-// Count puddings in cards and update player
-export function countPuddingsInCards(cards: Card[]): number {
-  return countCardType(cards, 'pudding');
 }

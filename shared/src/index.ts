@@ -82,3 +82,6 @@ export interface ClientToServerEvents {
   'card:confirm': () => void;
   'game:restart': () => void;
 }
+
+// Re-export scoring functions
+export * from './scoring.js';
