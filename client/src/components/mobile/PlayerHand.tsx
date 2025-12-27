@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGame } from "../../context/GameContext";
 import { Card } from "../shared/Card";
 import "./PlayerHand.css";
@@ -14,6 +14,8 @@ export function PlayerHand() {
   } = useGame();
   const [isPassingCards, setIsPassingCards] = useState(false);
   const [passDirection, setPassDirection] = useState<"left" | "right">("right");
+  const [isReceivingCards, setIsReceivingCards] = useState(false);
+  const prevHandRef = useRef<string | null>(null);
 
   const players = gameState?.players || [];
   const myIndex = players.findIndex((p) => p.id === myPlayerId);
@@ -26,6 +28,32 @@ export function PlayerHand() {
 
   // Determine pass direction: odd rounds = clockwise, even rounds = counter-clockwise
   const isClockwise = currentRound % 2 === 1;
+
+  // Detect when we receive a new hand and trigger entrance animation
+  // This runs on mount (returning from WaitingScreen) and when hand changes
+  useEffect(() => {
+    const handKey = hand.map((c) => c.id).join(",");
+    const currentTurn = gameState?.currentTurn || 1;
+    const currentRound = gameState?.currentRound || 1;
+    const isFirstTurnOfGame = currentTurn === 1 && currentRound === 1;
+
+    // Animate if:
+    // 1. Component just mounted with cards (prevHandRef is null) AND it's not the first turn
+    // 2. Hand changed while mounted (prevHandRef differs from current)
+    const shouldAnimate = hand.length > 0 && (
+      (prevHandRef.current === null && !isFirstTurnOfGame) ||
+      (prevHandRef.current !== null && prevHandRef.current !== handKey)
+    );
+
+    if (shouldAnimate) {
+      setIsReceivingCards(true);
+      const timer = setTimeout(() => {
+        setIsReceivingCards(false);
+      }, 1100); // Animation duration (600ms) + max stagger delay (450ms)
+      return () => clearTimeout(timer);
+    }
+    prevHandRef.current = handKey;
+  }, [hand, gameState?.currentTurn, gameState?.currentRound]);
 
   // Calculate who we pass to
   const numPlayers = players.length;
@@ -58,7 +86,7 @@ export function PlayerHand() {
       setTimeout(() => {
         setIsPassingCards(false);
       }, 100);
-    }, 400); // Match animation duration
+    }, 1100); // Animation duration (600ms) + max stagger delay (450ms)
   };
 
   return (
@@ -98,12 +126,18 @@ export function PlayerHand() {
           const isSelected = selectedCards.includes(card.id);
           const shouldFlyOff = isPassingCards && !isSelected;
 
+          // Cards enter from the opposite direction they fly out
+          // If clockwise (fly right), cards come from left; if counter-clockwise (fly left), cards come from right
+          const enterDirection = isClockwise ? "left" : "right";
+
           return (
             <div
               key={card.id}
               className={`card-wrapper ${
                 shouldFlyOff ? `flying-${passDirection}` : ""
-              } ${isSelected && isPassingCards ? "playing" : ""}`}
+              } ${isSelected && isPassingCards ? "playing" : ""} ${
+                isReceivingCards ? `entering-from-${enterDirection}` : ""
+              }`}
             >
               <Card
                 card={card}

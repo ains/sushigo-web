@@ -8,9 +8,10 @@ interface WaitingScreenProps {
 export function WaitingScreen({ gameState }: WaitingScreenProps) {
   const confirmedCount = gameState.players.filter(p => p.hasConfirmed).length;
   const totalPlayers = gameState.players.length;
+  const allReady = confirmedCount === totalPlayers;
 
   return (
-    <div className="waiting-screen">
+    <div className={`waiting-screen ${allReady ? 'fading-out' : ''}`}>
       <div className="waiting-icon">✓</div>
       <h1>Card Selected!</h1>
       <p className="waiting-text">Waiting for other players...</p>

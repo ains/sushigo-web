@@ -4,6 +4,16 @@
   flex-direction: column;
   padding: 16px;
   padding-bottom: 100px; /* Space for confirm button */
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .hand-header {
@@ -141,25 +151,56 @@
 }
 
 .card-wrapper.flying-right {
-  animation: flyRight 0.4s ease-in forwards;
+  animation: flyRight 0.6s ease-in forwards;
 }
 
 .card-wrapper.flying-left {
-  animation: flyLeft 0.4s ease-in forwards;
+  animation: flyLeft 0.6s ease-in forwards;
 }
 
 .card-wrapper.playing {
-  animation: playCard 0.4s ease-out forwards;
+  animation: playCard 0.6s ease-out forwards;
+}
+
+/* Entrance animations for receiving new hand */
+@keyframes enterFromLeft {
+  0% {
+    transform: translateX(-100vw) rotate(-10deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes enterFromRight {
+  0% {
+    transform: translateX(100vw) rotate(10deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.card-wrapper.entering-from-left {
+  animation: enterFromLeft 0.6s ease-out forwards;
+}
+
+.card-wrapper.entering-from-right {
+  animation: enterFromRight 0.6s ease-out forwards;
 }
 
 /* Stagger the animation for each card */
 .card-wrapper:nth-child(1) { animation-delay: 0ms; }
-.card-wrapper:nth-child(2) { animation-delay: 30ms; }
-.card-wrapper:nth-child(3) { animation-delay: 60ms; }
-.card-wrapper:nth-child(4) { animation-delay: 90ms; }
-.card-wrapper:nth-child(5) { animation-delay: 120ms; }
-.card-wrapper:nth-child(6) { animation-delay: 150ms; }
-.card-wrapper:nth-child(7) { animation-delay: 180ms; }
-.card-wrapper:nth-child(8) { animation-delay: 210ms; }
-.card-wrapper:nth-child(9) { animation-delay: 240ms; }
-.card-wrapper:nth-child(10) { animation-delay: 270ms; }
+.card-wrapper:nth-child(2) { animation-delay: 50ms; }
+.card-wrapper:nth-child(3) { animation-delay: 100ms; }
+.card-wrapper:nth-child(4) { animation-delay: 150ms; }
+.card-wrapper:nth-child(5) { animation-delay: 200ms; }
+.card-wrapper:nth-child(6) { animation-delay: 250ms; }
+.card-wrapper:nth-child(7) { animation-delay: 300ms; }
+.card-wrapper:nth-child(8) { animation-delay: 350ms; }
+.card-wrapper:nth-child(9) { animation-delay: 400ms; }
+.card-wrapper:nth-child(10) { animation-delay: 450ms; }
