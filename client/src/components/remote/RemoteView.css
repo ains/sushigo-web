@@ -256,7 +256,9 @@
 .hand-section {
   flex-shrink: 0;
   max-height: 50%;
-  overflow: visible;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .hand-section .player-hand {
@@ -271,8 +273,9 @@
   background: var(--surface);
 }
 
-.cards-container {
-  overflow: visible;
+.hand-section .cards-container {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .waiting-content {
