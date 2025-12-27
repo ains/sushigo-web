@@ -37,6 +37,7 @@ npm run dev:server    # tsx watch on port 3000
 ```
 client/          # React 18 + Vite + TypeScript frontend
 server/          # Express + Socket.IO backend
+shared/          # Shared components between the client / server (types and scoring)
 ```
 
 ### Real-Time Communication

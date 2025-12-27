@@ -1,24 +1,10 @@
-// Card Types
-export type CardType =
-  | 'tempura'
-  | 'sashimi'
-  | 'dumpling'
-  | 'maki1'
-  | 'maki2'
-  | 'maki3'
-  | 'nigiri_egg'
-  | 'nigiri_salmon'
-  | 'nigiri_squid'
-  | 'wasabi'
-  | 'pudding'
-  | 'chopsticks';
+// Re-export all shared types
+export * from 'sushigo-shared';
 
-export interface Card {
-  id: string;
-  type: CardType;
-}
+// Import types needed for server-specific definitions
+import type { Card, CardType, GamePhase, PublicPlayer } from 'sushigo-shared';
 
-// Player state
+// Player state (server-only - includes private hand)
 export interface Player {
   id: string;
   socketId: string;
@@ -33,10 +19,7 @@ export interface Player {
   seatIndex: number | null;  // 0-3, null if not seated
 }
 
-// Game phases
-export type GamePhase = 'lobby' | 'playing' | 'round_end' | 'game_end';
-
-// Game state
+// Game state (server-only - includes full player state)
 export interface GameState {
   id: string;
   code: string;
@@ -47,65 +30,6 @@ export interface GameState {
   currentTurn: number;     // Tracks turn within round
   maxPlayers: number;
   cardsPerHand: number;
-}
-
-// Socket events - Server to Client
-export interface ServerToClientEvents {
-  'game:created': (data: { gameCode: string; gameId: string; gameState: PublicGameState }) => void;
-  'game:error': (data: { message: string }) => void;
-  'player:joined': (data: { player: PublicPlayer; players: PublicPlayer[]; gameState: PublicGameState }) => void;
-  'player:left': (data: { playerId: string; players: PublicPlayer[] }) => void;
-  'game:started': (data: { gameState: PublicGameState }) => void;
-  'hand:dealt': (data: { hand: Card[] }) => void;
-  'player:ready': (data: { playerId: string }) => void;
-  'cards:revealed': (data: {
-    revealedCards: { playerId: string; cards: Card[] }[];
-    gameState: PublicGameState;
-  }) => void;
-  'round:end': (data: {
-    scores: { playerId: string; roundScore: number; totalScore: number }[];
-    gameState: PublicGameState;
-  }) => void;
-  'game:end': (data: {
-    finalScores: { playerId: string; totalScore: number; puddings: number }[];
-    winner: string;
-  }) => void;
-  'state:update': (data: { gameState: PublicGameState }) => void;
-}
-
-// Socket events - Client to Server
-export interface ClientToServerEvents {
-  'game:create': () => void;
-  'game:join': (data: { code: string; name: string }) => void;
-  'game:start': () => void;
-  'seat:select': (data: { seatIndex: number }) => void;
-  'card:select': (data: { cardIds: string[] }) => void;
-  'card:confirm': () => void;
-  'game:restart': () => void;
-}
-
-// Public player info (sent to clients - hides hand)
-export interface PublicPlayer {
-  id: string;
-  name: string;
-  playedCards: Card[][];
-  score: number;
-  puddings: number;
-  hasConfirmed: boolean;
-  isConnected: boolean;
-  handSize: number;
-  seatIndex: number | null;  // 0-3, null if not seated
-}
-
-// Public game state (sent to clients)
-export interface PublicGameState {
-  id: string;
-  code: string;
-  phase: GamePhase;
-  players: PublicPlayer[];
-  currentRound: number;
-  currentTurn: number;
-  maxPlayers: number;
 }
 
 // Deck configuration
