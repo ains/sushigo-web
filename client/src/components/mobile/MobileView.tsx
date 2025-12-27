@@ -13,7 +13,7 @@ export function MobileView() {
   const { gameState, myPlayerId, finalScores, winner, selectSeat } = useGame();
 
   const phase = gameState?.phase;
-  const myPlayer = gameState?.players.find(p => p.id === myPlayerId);
+  const myPlayer = gameState?.players.find((p) => p.id === myPlayerId);
 
   // Not joined yet
   if (!myPlayerId || !gameState) {
@@ -22,7 +22,7 @@ export function MobileView() {
 
   // Game ended
   if (finalScores && winner && myPlayer) {
-    const myRank = finalScores.findIndex(s => s.playerId === myPlayerId) + 1;
+    const myRank = finalScores.findIndex((s) => s.playerId === myPlayerId) + 1;
     const isWinner = myPlayerId === winner;
 
     return (
@@ -39,12 +39,7 @@ export function MobileView() {
   if (phase === 'lobby') {
     // Need to select a seat
     if (myPlayer?.seatIndex === null) {
-      return (
-        <SeatSelect
-          players={gameState.players}
-          onSelectSeat={selectSeat}
-        />
-      );
+      return <SeatSelect players={gameState.players} onSelectSeat={selectSeat} />;
     }
 
     // Already seated, waiting for game to start
@@ -58,7 +53,9 @@ export function MobileView() {
         <div className="waiting-message">
           <div className="spinner"></div>
           <p>Waiting for other players to select seats...</p>
-          <p className="player-count">{gameState.players.length} / {gameState.maxPlayers} players</p>
+          <p className="player-count">
+            {gameState.players.length} / {gameState.maxPlayers} players
+          </p>
         </div>
       </div>
     );

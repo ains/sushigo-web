@@ -52,7 +52,11 @@ export type ViewMode = 'tablet' | 'mobile';
 export interface ServerToClientEvents {
   'game:created': (data: { gameCode: string; gameId: string; gameState: PublicGameState }) => void;
   'game:error': (data: { message: string }) => void;
-  'player:joined': (data: { player: PublicPlayer; players: PublicPlayer[]; gameState: PublicGameState }) => void;
+  'player:joined': (data: {
+    player: PublicPlayer;
+    players: PublicPlayer[];
+    gameState: PublicGameState;
+  }) => void;
   'player:left': (data: { playerId: string; players: PublicPlayer[] }) => void;
   'game:started': (data: { gameState: PublicGameState }) => void;
   'hand:dealt': (data: { hand: Card[] }) => void;

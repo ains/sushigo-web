@@ -1,19 +1,13 @@
-import { useState, useEffect, useRef } from "react";
-import { useGame } from "../../context/GameContext";
-import { Card } from "../shared/Card";
-import "./PlayerHand.css";
+import { useState, useEffect, useRef } from 'react';
+import { useGame } from '../../context/GameContext';
+import { Card } from '../shared/Card';
+import './PlayerHand.css';
 
 export function PlayerHand() {
-  const {
-    hand,
-    selectedCards,
-    toggleCardSelection,
-    confirmSelection,
-    gameState,
-    myPlayerId,
-  } = useGame();
+  const { hand, selectedCards, toggleCardSelection, confirmSelection, gameState, myPlayerId } =
+    useGame();
   const [isPassingCards, setIsPassingCards] = useState(false);
-  const [passDirection, setPassDirection] = useState<"left" | "right">("right");
+  const [passDirection, setPassDirection] = useState<'left' | 'right'>('right');
   const [isReceivingCards, setIsReceivingCards] = useState(false);
   const prevHandRef = useRef<string | null>(null);
 
@@ -22,7 +16,7 @@ export function PlayerHand() {
   const currentRound = gameState?.currentRound || 1;
   const myPlayer = players[myIndex];
   const hasChopsticks = myPlayer?.playedCards[currentRound - 1]?.some(
-    (c) => c.type === "chopsticks"
+    (c) => c.type === 'chopsticks'
   );
   const maxCards = hasChopsticks ? 2 : 1;
 
@@ -32,7 +26,7 @@ export function PlayerHand() {
   // Detect when we receive a new hand and trigger entrance animation
   // This runs on mount (returning from WaitingScreen) and when hand changes
   useEffect(() => {
-    const handKey = hand.map((c) => c.id).join(",");
+    const handKey = hand.map((c) => c.id).join(',');
     const currentTurn = gameState?.currentTurn || 1;
     const currentRound = gameState?.currentRound || 1;
     const isFirstTurnOfGame = currentTurn === 1 && currentRound === 1;
@@ -40,10 +34,10 @@ export function PlayerHand() {
     // Animate if:
     // 1. Component just mounted with cards (prevHandRef is null) AND it's not the first turn
     // 2. Hand changed while mounted (prevHandRef differs from current)
-    const shouldAnimate = hand.length > 0 && (
-      (prevHandRef.current === null && !isFirstTurnOfGame) ||
-      (prevHandRef.current !== null && prevHandRef.current !== handKey)
-    );
+    const shouldAnimate =
+      hand.length > 0 &&
+      ((prevHandRef.current === null && !isFirstTurnOfGame) ||
+        (prevHandRef.current !== null && prevHandRef.current !== handKey));
 
     if (shouldAnimate) {
       setIsReceivingCards(true);
@@ -76,7 +70,7 @@ export function PlayerHand() {
 
     // Set the pass direction for animation
     // Clockwise = cards fly right, Counter-clockwise = cards fly left
-    setPassDirection(isClockwise ? "right" : "left");
+    setPassDirection(isClockwise ? 'right' : 'left');
     setIsPassingCards(true);
 
     // Wait for animation to complete before confirming
@@ -97,29 +91,23 @@ export function PlayerHand() {
           <span className="separator">•</span>
           <span>Turn {gameState?.currentTurn || 1}</span>
         </div>
-        {hasChopsticks && (
-          <div className="chopsticks-notice">🥢 You can play 2 cards!</div>
-        )}
+        {hasChopsticks && <div className="chopsticks-notice">🥢 You can play 2 cards!</div>}
       </div>
 
       {numPlayers > 1 && (
         <div className="pass-info">
           <span className="pass-direction">
-            {isClockwise ? "↻" : "↺"} Passing{" "}
-            {isClockwise ? "clockwise" : "counter-clockwise"}
+            {isClockwise ? '↻' : '↺'} Passing {isClockwise ? 'clockwise' : 'counter-clockwise'}
           </span>
           <div className="pass-details">
             <span>
-              → Remaining cards will be passed to{" "}
-              <strong>{passToPlayer?.name}</strong>
+              → Remaining cards will be passed to <strong>{passToPlayer?.name}</strong>
             </span>
           </div>
         </div>
       )}
 
-      <div className="instruction">
-        Select {maxCards === 2 ? "1 or 2 cards" : "a card"} to play
-      </div>
+      <div className="instruction">Select {maxCards === 2 ? '1 or 2 cards' : 'a card'} to play</div>
 
       <div className="cards-container">
         {hand.map((card) => {
@@ -128,15 +116,15 @@ export function PlayerHand() {
 
           // Cards enter from the opposite direction they fly out
           // If clockwise (fly right), cards come from left; if counter-clockwise (fly left), cards come from right
-          const enterDirection = isClockwise ? "left" : "right";
+          const enterDirection = isClockwise ? 'left' : 'right';
 
           return (
             <div
               key={card.id}
               className={`card-wrapper ${
-                shouldFlyOff ? `flying-${passDirection}` : ""
-              } ${isSelected && isPassingCards ? "playing" : ""} ${
-                isReceivingCards ? `entering-from-${enterDirection}` : ""
+                shouldFlyOff ? `flying-${passDirection}` : ''
+              } ${isSelected && isPassingCards ? 'playing' : ''} ${
+                isReceivingCards ? `entering-from-${enterDirection}` : ''
               }`}
             >
               <Card
@@ -158,12 +146,12 @@ export function PlayerHand() {
           onClick={handleConfirm}
         >
           {isPassingCards
-            ? "Passing cards..."
+            ? 'Passing cards...'
             : selectedCards.length === 0
-            ? "Select a card"
-            : selectedCards.length === 1
-            ? "Play Card"
-            : "Play 2 Cards"}
+              ? 'Select a card'
+              : selectedCards.length === 1
+                ? 'Play Card'
+                : 'Play 2 Cards'}
         </button>
       </div>
     </div>

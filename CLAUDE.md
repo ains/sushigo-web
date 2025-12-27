@@ -22,6 +22,10 @@ npm start
 npm test              # Run shared package tests once
 npm run test:watch    # Run tests in watch mode
 
+# Formatting
+npm run format        # Format all files with Prettier
+npm run format:check  # Check formatting (CI)
+
 # Individual package development
 npm run dev:client    # Vite dev server on port 5173
 npm run dev:server    # tsx watch on port 3000
@@ -90,3 +94,4 @@ Socket.IO handles all game events. Key event flow:
 - Development uses Vite proxy for Socket.IO WebSocket connections
 - TypeScript strict mode enabled throughout
 - Shared types and scoring logic are in the `shared` package (`sushigo-shared`)
+- Prettier is used for code formatting (config in `.prettierrc`)

@@ -1,4 +1,12 @@
-import { Card, GameState, Player, GamePhase, PublicGameState, PublicPlayer, CARDS_PER_PLAYER } from '../types/index.js';
+import {
+  Card,
+  GameState,
+  Player,
+  GamePhase,
+  PublicGameState,
+  PublicPlayer,
+  CARDS_PER_PLAYER,
+} from '../types/index.js';
 import { Deck } from './Deck.js';
 import {
   scoreRoundCards,
@@ -6,7 +14,7 @@ import {
   scorePuddingsForPlayers,
   countPuddings,
   type PlayerMakiData,
-  type PlayerPuddingData
+  type PlayerPuddingData,
 } from 'sushigo-shared';
 
 export class Game {
@@ -25,7 +33,7 @@ export class Game {
       currentRound: 0,
       currentTurn: 0,
       maxPlayers: 4,
-      cardsPerHand: 0
+      cardsPerHand: 0,
     };
   }
 
@@ -40,7 +48,7 @@ export class Game {
     }
 
     // Check for duplicate names
-    if (this.state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    if (this.state.players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
       return null;
     }
 
@@ -55,7 +63,7 @@ export class Game {
       score: 0,
       puddings: 0,
       isConnected: true,
-      seatIndex: null
+      seatIndex: null,
     };
 
     this.state.players.push(player);
@@ -64,7 +72,7 @@ export class Game {
 
   // Remove a player from the game
   removePlayer(socketId: string): boolean {
-    const index = this.state.players.findIndex(p => p.socketId === socketId);
+    const index = this.state.players.findIndex((p) => p.socketId === socketId);
     if (index === -1) return false;
 
     if (this.state.phase === 'lobby') {
@@ -78,7 +86,7 @@ export class Game {
 
   // Reconnect a player
   reconnectPlayer(playerId: string, newSocketId: string): boolean {
-    const player = this.state.players.find(p => p.id === playerId);
+    const player = this.state.players.find((p) => p.id === playerId);
     if (!player) return false;
 
     player.socketId = newSocketId;
@@ -96,7 +104,7 @@ export class Game {
 
     // Check if seat is already taken by another player
     const seatTaken = this.state.players.some(
-      p => p.id !== player.id && p.seatIndex === seatIndex
+      (p) => p.id !== player.id && p.seatIndex === seatIndex
     );
     if (seatTaken) return false;
 
@@ -106,7 +114,7 @@ export class Game {
 
   // Check if all players are seated
   allPlayersSeated(): boolean {
-    return this.state.players.every(p => p.seatIndex !== null);
+    return this.state.players.every((p) => p.seatIndex !== null);
   }
 
   // Start the game
@@ -151,12 +159,13 @@ export class Game {
     if (this.state.phase !== 'playing') return false;
 
     // Validate cards are in player's hand
-    const selectedCards = player.hand.filter(c => cardIds.includes(c.id));
+    const selectedCards = player.hand.filter((c) => cardIds.includes(c.id));
     if (selectedCards.length !== cardIds.length) return false;
 
     // Check if using chopsticks (can select 2 cards)
-    const hasChopsticks = player.playedCards[this.state.currentRound - 1]
-      .some(c => c.type === 'chopsticks');
+    const hasChopsticks = player.playedCards[this.state.currentRound - 1].some(
+      (c) => c.type === 'chopsticks'
+    );
 
     if (cardIds.length === 2 && !hasChopsticks) return false;
     if (cardIds.length > 2) return false;
@@ -178,9 +187,7 @@ export class Game {
 
   // Check if all players have confirmed
   allPlayersConfirmed(): boolean {
-    return this.state.players
-      .filter(p => p.isConnected)
-      .every(p => p.hasConfirmed);
+    return this.state.players.filter((p) => p.isConnected).every((p) => p.hasConfirmed);
   }
 
   // Reveal all selected cards and process turn
@@ -200,14 +207,18 @@ export class Game {
       player.puddings += countPuddings(selectedCards);
 
       // Remove selected cards from hand
-      player.hand = player.hand.filter(c => !selectedCards.some(sc => sc.id === c.id));
+      player.hand = player.hand.filter((c) => !selectedCards.some((sc) => sc.id === c.id));
 
       // If player used chopsticks (played 2 cards), return chopsticks to hand
       if (selectedCards.length === 2) {
-        const chopsticksIndex = player.playedCards[this.state.currentRound - 1]
-          .findIndex(c => c.type === 'chopsticks');
+        const chopsticksIndex = player.playedCards[this.state.currentRound - 1].findIndex(
+          (c) => c.type === 'chopsticks'
+        );
         if (chopsticksIndex !== -1) {
-          const chopsticks = player.playedCards[this.state.currentRound - 1].splice(chopsticksIndex, 1)[0];
+          const chopsticks = player.playedCards[this.state.currentRound - 1].splice(
+            chopsticksIndex,
+            1
+          )[0];
           player.hand.push(chopsticks);
         }
       }
@@ -222,13 +233,13 @@ export class Game {
 
   // Pass hands to next player (clockwise)
   passHands(): void {
-    const players = this.state.players.filter(p => p.isConnected);
+    const players = this.state.players.filter((p) => p.isConnected);
     if (players.length < 2) return;
 
     // Alternate direction each round (clockwise on odd rounds, counter on even)
     const clockwise = this.state.currentRound % 2 === 1;
 
-    const hands = players.map(p => p.hand);
+    const hands = players.map((p) => p.hand);
 
     if (clockwise) {
       // Last player's hand goes to first player
@@ -251,7 +262,7 @@ export class Game {
     this.state.currentTurn++;
 
     // Check if round is over (all cards played)
-    const firstPlayer = this.state.players.find(p => p.isConnected);
+    const firstPlayer = this.state.players.find((p) => p.isConnected);
     if (!firstPlayer || firstPlayer.hand.length === 0) {
       return this.endRound();
     }
@@ -296,13 +307,13 @@ export class Game {
     }
 
     // Score maki (comparative)
-    const makiData: PlayerMakiData[] = this.state.players.map(p => ({
+    const makiData: PlayerMakiData[] = this.state.players.map((p) => ({
       id: p.id,
-      roundCards: p.playedCards[round - 1] || []
+      roundCards: p.playedCards[round - 1] || [],
     }));
     const makiScores = scoreMakiForPlayers(makiData);
     for (const [playerId, score] of makiScores) {
-      const player = this.state.players.find(p => p.id === playerId);
+      const player = this.state.players.find((p) => p.id === playerId);
       if (player) player.score += score;
     }
   }
@@ -310,13 +321,13 @@ export class Game {
   // End the game
   private endGame(): 'game_end' {
     // Score puddings
-    const puddingData: PlayerPuddingData[] = this.state.players.map(p => ({
+    const puddingData: PlayerPuddingData[] = this.state.players.map((p) => ({
       id: p.id,
-      puddings: p.puddings
+      puddings: p.puddings,
     }));
     const puddingScores = scorePuddingsForPlayers(puddingData);
     for (const [playerId, score] of puddingScores) {
-      const player = this.state.players.find(p => p.id === playerId);
+      const player = this.state.players.find((p) => p.id === playerId);
       if (player) player.score += score;
     }
 
@@ -327,20 +338,20 @@ export class Game {
   // Get round scores for display
   getRoundScores(): { playerId: string; roundScore: number; totalScore: number }[] {
     const round = this.state.currentRound;
-    return this.state.players.map(p => ({
+    return this.state.players.map((p) => ({
       playerId: p.id,
       roundScore: scoreRoundCards(p.playedCards[round - 1] || []),
-      totalScore: p.score
+      totalScore: p.score,
     }));
   }
 
   // Get final scores
   getFinalScores(): { playerId: string; totalScore: number; puddings: number }[] {
     return this.state.players
-      .map(p => ({
+      .map((p) => ({
         playerId: p.id,
         totalScore: p.score,
-        puddings: p.puddings
+        puddings: p.puddings,
       }))
       .sort((a, b) => b.totalScore - a.totalScore);
   }
@@ -353,12 +364,12 @@ export class Game {
 
   // Get player by socket ID
   getPlayerBySocket(socketId: string): Player | undefined {
-    return this.state.players.find(p => p.socketId === socketId);
+    return this.state.players.find((p) => p.socketId === socketId);
   }
 
   // Get player by player ID
   getPlayerById(playerId: string): Player | undefined {
-    return this.state.players.find(p => p.id === playerId);
+    return this.state.players.find((p) => p.id === playerId);
   }
 
   // Get player's hand
@@ -378,7 +389,7 @@ export class Game {
       hasConfirmed: player.hasConfirmed,
       isConnected: player.isConnected,
       handSize: player.hand.length,
-      seatIndex: player.seatIndex
+      seatIndex: player.seatIndex,
     };
   }
 
@@ -388,20 +399,32 @@ export class Game {
       id: this.state.id,
       code: this.state.code,
       phase: this.state.phase,
-      players: this.state.players.map(p => this.toPublicPlayer(p)),
+      players: this.state.players.map((p) => this.toPublicPlayer(p)),
       currentRound: this.state.currentRound,
       currentTurn: this.state.currentTurn,
-      maxPlayers: this.state.maxPlayers
+      maxPlayers: this.state.maxPlayers,
     };
   }
 
   // Getters
-  get id(): string { return this.state.id; }
-  get code(): string { return this.state.code; }
-  get phase(): GamePhase { return this.state.phase; }
-  get hostSocketId(): string { return this.state.hostSocketId; }
-  get playerCount(): number { return this.state.players.length; }
-  get players(): Player[] { return this.state.players; }
+  get id(): string {
+    return this.state.id;
+  }
+  get code(): string {
+    return this.state.code;
+  }
+  get phase(): GamePhase {
+    return this.state.phase;
+  }
+  get hostSocketId(): string {
+    return this.state.hostSocketId;
+  }
+  get playerCount(): number {
+    return this.state.players.length;
+  }
+  get players(): Player[] {
+    return this.state.players;
+  }
 
   // Restart the game
   restart(): void {

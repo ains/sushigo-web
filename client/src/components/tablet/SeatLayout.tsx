@@ -8,7 +8,7 @@ interface SeatLayoutProps {
 export function SeatLayout({ players }: SeatLayoutProps) {
   // Get player at each seat (0-3)
   const getPlayerAtSeat = (seatIndex: number): PublicPlayer | undefined => {
-    return players.find(p => p.seatIndex === seatIndex);
+    return players.find((p) => p.seatIndex === seatIndex);
   };
 
   const renderSeat = (seatIndex: number, isTop: boolean) => {
@@ -20,9 +20,7 @@ export function SeatLayout({ players }: SeatLayoutProps) {
         {player ? (
           <>
             <div className="seat-player-name">{player.name}</div>
-            <div className="seat-status">
-              {player.isConnected ? '✓ Ready' : 'Disconnected'}
-            </div>
+            <div className="seat-status">{player.isConnected ? '✓ Ready' : 'Disconnected'}</div>
           </>
         ) : (
           <>

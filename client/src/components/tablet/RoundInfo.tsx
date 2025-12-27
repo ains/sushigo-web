@@ -20,9 +20,7 @@ export function RoundInfo({ round, turn, phase }: RoundInfoProps) {
       </div>
       <div className="phase-indicator">
         <span className={`phase-dot ${phase === 'playing' ? 'active' : ''}`}></span>
-        <span className="phase-text">
-          {phase === 'playing' ? 'Selecting Cards' : 'Round End'}
-        </span>
+        <span className="phase-text">{phase === 'playing' ? 'Selecting Cards' : 'Round End'}</span>
       </div>
     </div>
   );

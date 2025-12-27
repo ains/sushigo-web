@@ -19,9 +19,11 @@ function CardGroupDisplay({ group }: { group: CardGroup }) {
   const isUnused = group.type === 'unused_wasabi';
 
   return (
-    <div className={`card-group card-group-${group.type} ${isIncomplete ? 'incomplete' : ''} ${isUnused ? 'unused' : ''}`}>
+    <div
+      className={`card-group card-group-${group.type} ${isIncomplete ? 'incomplete' : ''} ${isUnused ? 'unused' : ''}`}
+    >
       <div className="card-group-cards">
-        {group.cards.map(card => (
+        {group.cards.map((card) => (
           <Card key={card.id} card={card} size="small" showPoints={false} />
         ))}
       </div>
@@ -50,9 +52,7 @@ function PlayerBoard({ player, currentRound }: PlayerBoardProps) {
         {cardGroups.map((group, index) => (
           <CardGroupDisplay key={`${group.type}-${index}`} group={group} />
         ))}
-        {cardGroups.length === 0 && (
-          <div className="no-cards">No cards played yet</div>
-        )}
+        {cardGroups.length === 0 && <div className="no-cards">No cards played yet</div>}
       </div>
     </div>
   );
@@ -65,7 +65,7 @@ export function GameBoard({ players, currentRound }: GameBoardProps) {
 
   // Get player at each seat position
   const getPlayerAtSeat = (seatIndex: number): PublicPlayer | undefined => {
-    return players.find(p => p.seatIndex === seatIndex);
+    return players.find((p) => p.seatIndex === seatIndex);
   };
 
   // Top players (seats 2 and 3)
@@ -77,7 +77,7 @@ export function GameBoard({ players, currentRound }: GameBoardProps) {
     <div className="game-board">
       {/* Top side - rotated 180° for opposing players */}
       <div className="table-side top-side">
-        {topPlayers.map(player => (
+        {topPlayers.map((player) => (
           <PlayerBoard key={player.id} player={player} currentRound={currentRound} />
         ))}
       </div>
@@ -87,7 +87,7 @@ export function GameBoard({ players, currentRound }: GameBoardProps) {
 
       {/* Bottom side - normal orientation */}
       <div className="table-side bottom-side">
-        {bottomPlayers.map(player => (
+        {bottomPlayers.map((player) => (
           <PlayerBoard key={player.id} player={player} currentRound={currentRound} />
         ))}
       </div>

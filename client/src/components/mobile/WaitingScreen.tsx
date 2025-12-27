@@ -6,7 +6,7 @@ interface WaitingScreenProps {
 }
 
 export function WaitingScreen({ gameState }: WaitingScreenProps) {
-  const confirmedCount = gameState.players.filter(p => p.hasConfirmed).length;
+  const confirmedCount = gameState.players.filter((p) => p.hasConfirmed).length;
   const totalPlayers = gameState.players.length;
   const allReady = confirmedCount === totalPlayers;
 
@@ -17,14 +17,12 @@ export function WaitingScreen({ gameState }: WaitingScreenProps) {
       <p className="waiting-text">Waiting for other players...</p>
 
       <div className="player-status-list">
-        {gameState.players.map(player => (
+        {gameState.players.map((player) => (
           <div
             key={player.id}
             className={`player-status-item ${player.hasConfirmed ? 'ready' : 'waiting'}`}
           >
-            <span className="status-icon">
-              {player.hasConfirmed ? '✓' : '...'}
-            </span>
+            <span className="status-icon">{player.hasConfirmed ? '✓' : '...'}</span>
             <span className="player-name">{player.name}</span>
           </div>
         ))}

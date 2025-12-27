@@ -23,20 +23,20 @@ export interface ScoreItem {
 export const DUMPLING_POINTS = [0, 1, 3, 6, 10, 15] as const;
 
 export const NIGIRI_VALUES: Record<string, number> = {
-  'nigiri_squid': 3,
-  'nigiri_salmon': 2,
-  'nigiri_egg': 1
+  nigiri_squid: 3,
+  nigiri_salmon: 2,
+  nigiri_egg: 1,
 };
 
 const NIGIRI_NAMES: Record<string, string> = {
-  'nigiri_egg': 'Egg',
-  'nigiri_salmon': 'Salmon',
-  'nigiri_squid': 'Squid'
+  nigiri_egg: 'Egg',
+  nigiri_salmon: 'Salmon',
+  nigiri_squid: 'Squid',
 };
 
 // Count cards of specific types
 function countCardType(cards: Card[], ...types: string[]): number {
-  return cards.filter(c => types.includes(c.type)).length;
+  return cards.filter((c) => types.includes(c.type)).length;
 }
 
 // Count maki rolls in cards
@@ -60,12 +60,12 @@ export function calculateScoreBreakdown(cards: Card[]): ScoreItem[] {
   const items: ScoreItem[] = [];
 
   // Separate cards by type
-  const tempuras = cards.filter(c => c.type === 'tempura');
-  const sashimis = cards.filter(c => c.type === 'sashimi');
-  const dumplings = cards.filter(c => c.type === 'dumpling');
-  const makis = cards.filter(c => c.type.startsWith('maki'));
-  const puddings = cards.filter(c => c.type === 'pudding');
-  const chopsticks = cards.filter(c => c.type === 'chopsticks');
+  const tempuras = cards.filter((c) => c.type === 'tempura');
+  const sashimis = cards.filter((c) => c.type === 'sashimi');
+  const dumplings = cards.filter((c) => c.type === 'dumpling');
+  const makis = cards.filter((c) => c.type.startsWith('maki'));
+  const puddings = cards.filter((c) => c.type === 'pudding');
+  const chopsticks = cards.filter((c) => c.type === 'chopsticks');
 
   // Process nigiri and wasabi in play order
   const wasabiNigiriPairs: { wasabi: Card; nigiri: Card }[] = [];
@@ -97,9 +97,8 @@ export function calculateScoreBreakdown(cards: Card[]): ScoreItem[] {
       label: 'Tempura',
       cards: tempuras,
       points,
-      description: pairs > 0
-        ? `${pairs} pair${pairs > 1 ? 's' : ''} = ${points} pts`
-        : '2 needed for 5 pts',
+      description:
+        pairs > 0 ? `${pairs} pair${pairs > 1 ? 's' : ''} = ${points} pts` : '2 needed for 5 pts',
     });
   }
 
@@ -111,9 +110,8 @@ export function calculateScoreBreakdown(cards: Card[]): ScoreItem[] {
       label: 'Sashimi',
       cards: sashimis,
       points,
-      description: sets > 0
-        ? `${sets} set${sets > 1 ? 's' : ''} = ${points} pts`
-        : '3 needed for 10 pts',
+      description:
+        sets > 0 ? `${sets} set${sets > 1 ? 's' : ''} = ${points} pts` : '3 needed for 10 pts',
     });
   }
 
@@ -206,7 +204,7 @@ export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[])
 
   const sorted = [...allPlayerMakis].sort((a, b) => b - a);
   const highest = sorted[0];
-  const firstPlaceCount = allPlayerMakis.filter(m => m === highest).length;
+  const firstPlaceCount = allPlayerMakis.filter((m) => m === highest).length;
 
   if (playerMaki === highest) {
     if (firstPlaceCount > 1) {
@@ -218,9 +216,9 @@ export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[])
 
   // Check for second place (only if there's a single first place winner)
   if (firstPlaceCount === 1) {
-    const secondHighest = sorted.find(m => m < highest) ?? 0;
+    const secondHighest = sorted.find((m) => m < highest) ?? 0;
     if (playerMaki === secondHighest && secondHighest > 0) {
-      const secondPlaceCount = allPlayerMakis.filter(m => m === secondHighest).length;
+      const secondPlaceCount = allPlayerMakis.filter((m) => m === secondHighest).length;
       return Math.floor(3 / secondPlaceCount);
     }
   }
@@ -231,7 +229,7 @@ export function calculateMakiBonus(playerMaki: number, allPlayerMakis: number[])
 // Score maki for all players (comparative scoring)
 export function scoreMakiForPlayers(players: PlayerMakiData[]): Map<string, number> {
   const scores = new Map<string, number>();
-  const allMakiCounts = players.map(p => countMaki(p.roundCards));
+  const allMakiCounts = players.map((p) => countMaki(p.roundCards));
 
   for (let i = 0; i < players.length; i++) {
     const bonus = calculateMakiBonus(allMakiCounts[i], allMakiCounts);
@@ -255,13 +253,13 @@ export function calculatePuddingBonus(playerPuddings: number, allPlayerPuddings:
 
   // Most puddings: +6 (split if tied)
   if (playerPuddings === highest) {
-    const tiedCount = allPlayerPuddings.filter(p => p === highest).length;
+    const tiedCount = allPlayerPuddings.filter((p) => p === highest).length;
     bonus += Math.floor(6 / tiedCount);
   }
 
   // Least puddings: -6 (split if tied), but not in 2-player games
   if (allPlayerPuddings.length > 2 && playerPuddings === lowest && lowest < highest) {
-    const tiedCount = allPlayerPuddings.filter(p => p === lowest).length;
+    const tiedCount = allPlayerPuddings.filter((p) => p === lowest).length;
     bonus -= Math.floor(6 / tiedCount);
   }
 
@@ -273,7 +271,7 @@ export function scorePuddingsForPlayers(players: PlayerPuddingData[]): Map<strin
   const scores = new Map<string, number>();
   if (players.length === 0) return scores;
 
-  const allPuddingCounts = players.map(p => p.puddings);
+  const allPuddingCounts = players.map((p) => p.puddings);
 
   for (const player of players) {
     const bonus = calculatePuddingBonus(player.puddings, allPuddingCounts);

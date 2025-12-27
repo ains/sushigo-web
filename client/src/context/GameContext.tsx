@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  ReactNode,
+} from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Card, PublicGameState, ClientToServerEvents, ServerToClientEvents } from '../types';
 
@@ -56,7 +64,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [revealedCards, setRevealedCards] = useState<RevealedCards[] | null>(null);
   const [roundScores, setRoundScores] = useState<RoundScore[] | null>(null);
-  const [finalScores, setFinalScores] = useState<{ playerId: string; totalScore: number; puddings: number }[] | null>(null);
+  const [finalScores, setFinalScores] = useState<
+    { playerId: string; totalScore: number; puddings: number }[] | null
+  >(null);
   const [winner, setWinner] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,7 +75,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const serverUrl = import.meta.env.DEV ? `http://${window.location.hostname}:3000` : undefined;
 
     const newSocket: GameSocket = io(serverUrl, {
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
     });
 
     setSocket(newSocket);
@@ -118,13 +128,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     });
 
     newSocket.on('player:ready', ({ playerId }) => {
-      setGameState(prev => {
+      setGameState((prev) => {
         if (!prev) return null;
         return {
           ...prev,
-          players: prev.players.map(p =>
-            p.id === playerId ? { ...p, hasConfirmed: true } : p
-          )
+          players: prev.players.map((p) => (p.id === playerId ? { ...p, hasConfirmed: true } : p)),
         };
       });
     });
@@ -159,49 +167,63 @@ export function GameProvider({ children }: { children: ReactNode }) {
     socket?.emit('game:create');
   }, [socket]);
 
-  const joinGame = useCallback((code: string, name: string) => {
-    socket?.emit('game:join', { code, name });
-    setGameCode(code.toUpperCase());
-  }, [socket]);
+  const joinGame = useCallback(
+    (code: string, name: string) => {
+      socket?.emit('game:join', { code, name });
+      setGameCode(code.toUpperCase());
+    },
+    [socket]
+  );
 
   const startGame = useCallback(() => {
     socket?.emit('game:start');
   }, [socket]);
 
-  const selectSeat = useCallback((seatIndex: number) => {
-    socket?.emit('seat:select', { seatIndex });
-  }, [socket]);
+  const selectSeat = useCallback(
+    (seatIndex: number) => {
+      socket?.emit('seat:select', { seatIndex });
+    },
+    [socket]
+  );
 
-  const selectCards = useCallback((cardIds: string[]) => {
-    setSelectedCards(cardIds);
-    socket?.emit('card:select', { cardIds });
-  }, [socket]);
+  const selectCards = useCallback(
+    (cardIds: string[]) => {
+      setSelectedCards(cardIds);
+      socket?.emit('card:select', { cardIds });
+    },
+    [socket]
+  );
 
-  const toggleCardSelection = useCallback((cardId: string) => {
-    setSelectedCards(prev => {
-      // Check if player has chopsticks (can select 2)
-      const myPlayer = gameState?.players.find(p => p.id === myPlayerId);
-      const currentRound = gameState?.currentRound || 1;
-      const hasChopsticks = myPlayer?.playedCards[currentRound - 1]?.some(c => c.type === 'chopsticks');
-      const maxCards = hasChopsticks ? 2 : 1;
+  const toggleCardSelection = useCallback(
+    (cardId: string) => {
+      setSelectedCards((prev) => {
+        // Check if player has chopsticks (can select 2)
+        const myPlayer = gameState?.players.find((p) => p.id === myPlayerId);
+        const currentRound = gameState?.currentRound || 1;
+        const hasChopsticks = myPlayer?.playedCards[currentRound - 1]?.some(
+          (c) => c.type === 'chopsticks'
+        );
+        const maxCards = hasChopsticks ? 2 : 1;
 
-      let newSelection: string[];
-      if (prev.includes(cardId)) {
-        newSelection = prev.filter(id => id !== cardId);
-      } else {
-        if (prev.length >= maxCards) {
-          // Replace selection if at max
-          newSelection = [cardId];
+        let newSelection: string[];
+        if (prev.includes(cardId)) {
+          newSelection = prev.filter((id) => id !== cardId);
         } else {
-          newSelection = [...prev, cardId];
+          if (prev.length >= maxCards) {
+            // Replace selection if at max
+            newSelection = [cardId];
+          } else {
+            newSelection = [...prev, cardId];
+          }
         }
-      }
 
-      // Emit selection to server
-      socket?.emit('card:select', { cardIds: newSelection });
-      return newSelection;
-    });
-  }, [socket, gameState, myPlayerId]);
+        // Emit selection to server
+        socket?.emit('card:select', { cardIds: newSelection });
+        return newSelection;
+      });
+    },
+    [socket, gameState, myPlayerId]
+  );
 
   const confirmSelection = useCallback(() => {
     if (selectedCards.length > 0) {
@@ -248,7 +270,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         toggleCardSelection,
         confirmSelection,
         restartGame,
-        clearError
+        clearError,
       }}
     >
       {children}

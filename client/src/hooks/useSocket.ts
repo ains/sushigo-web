@@ -11,7 +11,7 @@ export function useSocket() {
   useEffect(() => {
     // Connect to the server
     const socket: GameSocket = io({
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
     });
 
     socketRef.current = socket;
@@ -33,6 +33,6 @@ export function useSocket() {
 
   return {
     socket: socketRef.current,
-    isConnected
+    isConnected,
   };
 }

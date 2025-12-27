@@ -1,7 +1,7 @@
-import { PublicPlayer } from "../../types";
-import { Card } from "../shared/Card";
-import { countMaki, calculateScoreBreakdown, calculateMakiBonus } from "sushigo-shared";
-import "./RoundScoreBreakdown.css";
+import { PublicPlayer } from '../../types';
+import { Card } from '../shared/Card';
+import { countMaki, calculateScoreBreakdown, calculateMakiBonus } from 'sushigo-shared';
+import './RoundScoreBreakdown.css';
 
 interface RoundScoreBreakdownProps {
   player: PublicPlayer;
@@ -16,11 +16,8 @@ interface MakiRanking {
   points: number;
 }
 
-function calculateMakiRankings(
-  players: PublicPlayer[],
-  roundIndex: number
-): MakiRanking[] {
-  const allMakiCounts = players.map(p => countMaki(p.playedCards[roundIndex] || []));
+function calculateMakiRankings(players: PublicPlayer[], roundIndex: number): MakiRanking[] {
+  const allMakiCounts = players.map((p) => countMaki(p.playedCards[roundIndex] || []));
 
   return players.map((p, i) => ({
     playerId: p.id,
@@ -39,31 +36,23 @@ function MakiDescription({
   makiRankings: MakiRanking[];
   myPlayerId: string;
 }) {
-  const winners = makiRankings
-    .filter((r) => r.points > 0)
-    .sort((a, b) => b.points - a.points);
+  const winners = makiRankings.filter((r) => r.points > 0).sort((a, b) => b.points - a.points);
 
   if (winners.length === 0) {
-    return (
-      <div className="score-item-description">
-        No one scored maki points this round.
-      </div>
-    );
+    return <div className="score-item-description">No one scored maki points this round.</div>;
   }
 
   return (
     <div className="score-item-description maki-description">
       <p>
-        You had <strong>{myMakiCount}</strong> maki{myMakiCount !== 1 ? "" : ""}{" "}
-        this round.
+        You had <strong>{myMakiCount}</strong> maki{myMakiCount !== 1 ? '' : ''} this round.
       </p>
       {winners.map((winner) => {
         const isMe = winner.playerId === myPlayerId;
-        const name = isMe ? "You" : winner.playerName;
+        const name = isMe ? 'You' : winner.playerName;
         return (
-          <p key={winner.playerId} className={isMe ? "maki-winner-me" : ""}>
-            <strong>+{winner.points} pts</strong> to {name} ({winner.makiCount}{" "}
-            maki)
+          <p key={winner.playerId} className={isMe ? 'maki-winner-me' : ''}>
+            <strong>+{winner.points} pts</strong> to {name} ({winner.makiCount} maki)
           </p>
         );
       })}
@@ -83,10 +72,7 @@ export function RoundScoreBreakdown({
   const myMakiCount = myMakiRanking?.makiCount || 0;
   const myMakiPoints = myMakiRanking?.points || 0;
 
-  const roundPoints = scoreItems.reduce(
-    (sum, item) => sum + item.points,
-    0
-  ) + myMakiPoints; // Include maki points in total
+  const roundPoints = scoreItems.reduce((sum, item) => sum + item.points, 0) + myMakiPoints; // Include maki points in total
 
   const previousScore = player.score - roundPoints;
 
@@ -96,25 +82,17 @@ export function RoundScoreBreakdown({
 
       <div className="score-items">
         {scoreItems.map((item, index) => {
-          const isMaki = item.label === "Maki Rolls";
+          const isMaki = item.label === 'Maki Rolls';
           const displayPoints = isMaki ? myMakiPoints : item.points;
           const hasPoints = displayPoints > 0;
 
           return (
-            <div
-              key={index}
-              className={`score-item ${!hasPoints ? "no-points" : ""}`}
-            >
+            <div key={index} className={`score-item ${!hasPoints ? 'no-points' : ''}`}>
               <div className="score-item-content">
                 <span className="score-item-label">{item.label}</span>
                 <div className="score-item-cards">
                   {item.cards.map((card) => (
-                    <Card
-                      key={card.id}
-                      card={card}
-                      size="small"
-                      showPoints={false}
-                    />
+                    <Card key={card.id} card={card} size="small" showPoints={false} />
                   ))}
                 </div>
                 {isMaki ? (
@@ -125,9 +103,7 @@ export function RoundScoreBreakdown({
                   />
                 ) : (
                   item.description && (
-                    <div className="score-item-description">
-                      {item.description}
-                    </div>
+                    <div className="score-item-description">{item.description}</div>
                   )
                 )}
               </div>

@@ -17,9 +17,12 @@
     "build:client": "npm run build -w client",
     "start": "npm start -w server",
     "test": "npm run test -w shared",
-    "test:watch": "npm run test:watch -w shared"
+    "test:watch": "npm run test:watch -w shared",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "prettier": "^3.7.4"
   }
 }

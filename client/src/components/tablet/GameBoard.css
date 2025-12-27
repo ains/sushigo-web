@@ -22,7 +22,14 @@
 /* Center divider between the two sides */
 .table-divider {
   height: 4px;
-  background: linear-gradient(90deg, transparent, var(--surface-light), var(--primary), var(--surface-light), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--surface-light),
+    var(--primary),
+    var(--surface-light),
+    transparent
+  );
   margin: 0 40px;
   border-radius: 2px;
 }

@@ -56,17 +56,11 @@ export function JoinGame({ initialCode }: JoinGameProps) {
             autoComplete="off"
           />
         </div>
-        <button
-          type="submit"
-          className="btn btn-primary btn-large join-btn"
-          disabled={!canJoin}
-        >
+        <button type="submit" className="btn btn-primary btn-large join-btn" disabled={!canJoin}>
           Join Game
         </button>
       </form>
-      {error && (
-        <div className="error-message">{error}</div>
-      )}
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 }

@@ -92,7 +92,9 @@ export function createMockHand(): Card[] {
 }
 
 // Create mock players
-export function createMockPlayers(scenario: 'mid-round' | 'round-end' | 'game-end'): PublicPlayer[] {
+export function createMockPlayers(
+  scenario: 'mid-round' | 'round-end' | 'game-end'
+): PublicPlayer[] {
   const currentRound = scenario === 'game-end' ? 3 : scenario === 'round-end' ? 2 : 1;
 
   const player1PlayedCards: Card[][] = [];
@@ -143,7 +145,7 @@ export function createMockPlayers(scenario: 'mid-round' | 'round-end' | 'game-en
     {
       id: 'player-3',
       name: 'Bob',
-      playedCards: player2PlayedCards.map(cards => [...cards].reverse()),
+      playedCards: player2PlayedCards.map((cards) => [...cards].reverse()),
       score: scenario === 'game-end' ? 38 : scenario === 'round-end' ? 18 : 5,
       puddings: scenario === 'game-end' ? 1 : scenario === 'round-end' ? 1 : 0,
       hasConfirmed: true,
@@ -154,7 +156,7 @@ export function createMockPlayers(scenario: 'mid-round' | 'round-end' | 'game-en
     {
       id: 'player-4',
       name: 'Charlie',
-      playedCards: player1PlayedCards.map(cards => [...cards].slice(0, -2)),
+      playedCards: player1PlayedCards.map((cards) => [...cards].slice(0, -2)),
       score: scenario === 'game-end' ? 41 : scenario === 'round-end' ? 20 : 10,
       puddings: scenario === 'game-end' ? 0 : scenario === 'round-end' ? 0 : 0,
       hasConfirmed: scenario === 'mid-round' ? false : true,
@@ -166,13 +168,16 @@ export function createMockPlayers(scenario: 'mid-round' | 'round-end' | 'game-en
 }
 
 // Create mock game state
-export function createMockGameState(scenario: 'mid-round' | 'round-end' | 'game-end'): PublicGameState {
+export function createMockGameState(
+  scenario: 'mid-round' | 'round-end' | 'game-end'
+): PublicGameState {
   const players = createMockPlayers(scenario);
 
   return {
     id: 'debug-game',
     code: 'DEBUG',
-    phase: scenario === 'mid-round' ? 'playing' : scenario === 'round-end' ? 'round_end' : 'game_end',
+    phase:
+      scenario === 'mid-round' ? 'playing' : scenario === 'round-end' ? 'round_end' : 'game_end',
     players,
     currentRound: scenario === 'game-end' ? 3 : scenario === 'round-end' ? 2 : 1,
     currentTurn: scenario === 'mid-round' ? 5 : scenario === 'round-end' ? 10 : 10,
@@ -181,10 +186,12 @@ export function createMockGameState(scenario: 'mid-round' | 'round-end' | 'game-
 }
 
 // Create mock final scores
-export function createMockFinalScores(players: PublicPlayer[]): { playerId: string; totalScore: number; puddings: number }[] {
+export function createMockFinalScores(
+  players: PublicPlayer[]
+): { playerId: string; totalScore: number; puddings: number }[] {
   return [...players]
     .sort((a, b) => b.score - a.score)
-    .map(p => ({
+    .map((p) => ({
       playerId: p.id,
       totalScore: p.score,
       puddings: p.puddings,

@@ -10,11 +10,7 @@ function App() {
 
   return (
     <div className="app">
-      {!isConnected && (
-        <div className="connection-status">
-          Connecting to server...
-        </div>
-      )}
+      {!isConnected && <div className="connection-status">Connecting to server...</div>}
 
       {error && (
         <div className="error-toast" onClick={clearError}>

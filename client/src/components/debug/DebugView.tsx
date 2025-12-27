@@ -5,11 +5,7 @@ import { GameScoreBreakdown } from '../mobile/GameScoreBreakdown';
 import { GameBoard } from '../tablet/GameBoard';
 import { TVGameBoard } from '../tv/TVGameBoard';
 import { TVGameEnd } from '../tv/TVGameEnd';
-import {
-  createMockGameState,
-  createMockHand,
-  createMockFinalScores,
-} from './mockData';
+import { createMockGameState, createMockHand, createMockFinalScores } from './mockData';
 import './DebugView.css';
 
 type ViewType = 'mid-round' | 'round-end' | 'game-end';
@@ -31,10 +27,8 @@ function DebugMobileView({ view }: { view: ViewType }) {
           hand={hand}
           selectedCards={selectedCards}
           onToggleCard={(cardId) => {
-            setSelectedCards(prev =>
-              prev.includes(cardId)
-                ? prev.filter(id => id !== cardId)
-                : [cardId]
+            setSelectedCards((prev) =>
+              prev.includes(cardId) ? prev.filter((id) => id !== cardId) : [cardId]
             );
           }}
           gameState={gameState}
@@ -58,7 +52,7 @@ function DebugMobileView({ view }: { view: ViewType }) {
 
   if (view === 'game-end') {
     const finalScores = createMockFinalScores(gameState.players);
-    const myRank = finalScores.findIndex(s => s.playerId === myPlayer.id) + 1;
+    const myRank = finalScores.findIndex((s) => s.playerId === myPlayer.id) + 1;
     const isWinner = myRank === 1;
 
     return (
@@ -120,7 +114,7 @@ function MockPlayerHand({
       <div className="instruction">Select a card to play</div>
 
       <div className="cards-container">
-        {hand.map(card => (
+        {hand.map((card) => (
           <div key={card.id} className="card-wrapper">
             <Card
               card={card}
@@ -231,7 +225,9 @@ export function DebugView() {
   return (
     <div className="debug-view">
       <div className="debug-controls">
-        <Link to="/debug" className="debug-back">← Back</Link>
+        <Link to="/debug" className="debug-back">
+          ← Back
+        </Link>
         <div className="debug-mode-switcher">
           <button
             className={displayMode === 'mobile' ? 'active' : ''}
@@ -253,7 +249,7 @@ export function DebugView() {
           </button>
         </div>
         <div className="debug-view-switcher">
-          {validViews.map(v => (
+          {validViews.map((v) => (
             <Link
               key={v}
               to={`/debug/${v}`}

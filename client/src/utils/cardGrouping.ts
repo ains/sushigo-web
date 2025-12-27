@@ -2,7 +2,18 @@ import { Card } from '../types';
 import { DUMPLING_POINTS, NIGIRI_VALUES, countMaki } from 'sushigo-shared';
 
 export interface CardGroup {
-  type: 'tempura_set' | 'sashimi_set' | 'dumplings' | 'wasabi_nigiri' | 'nigiri' | 'maki' | 'pudding' | 'chopsticks' | 'incomplete_tempura' | 'incomplete_sashimi' | 'unused_wasabi';
+  type:
+    | 'tempura_set'
+    | 'sashimi_set'
+    | 'dumplings'
+    | 'wasabi_nigiri'
+    | 'nigiri'
+    | 'maki'
+    | 'pudding'
+    | 'chopsticks'
+    | 'incomplete_tempura'
+    | 'incomplete_sashimi'
+    | 'unused_wasabi';
   cards: Card[];
   label?: string;
 }

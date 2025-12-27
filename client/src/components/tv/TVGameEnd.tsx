@@ -1,5 +1,10 @@
-import { scoreRoundCards, countMaki, calculateMakiBonus, calculatePuddingBonus } from 'sushigo-shared';
-import { PublicPlayer } from "../../types";
+import {
+  scoreRoundCards,
+  countMaki,
+  calculateMakiBonus,
+  calculatePuddingBonus,
+} from 'sushigo-shared';
+import { PublicPlayer } from '../../types';
 
 interface PlayerScoreBreakdown {
   player: PublicPlayer;
@@ -14,17 +19,14 @@ function calculateLeaderboard(players: PublicPlayer[]): PlayerScoreBreakdown[] {
   const breakdowns = players.map((player) => {
     const roundScores = player.playedCards.map((cards, roundIndex) => {
       const basePoints = scoreRoundCards(cards);
-      const allMakis = players.map((p) =>
-        countMaki(p.playedCards[roundIndex] || [])
-      );
+      const allMakis = players.map((p) => countMaki(p.playedCards[roundIndex] || []));
       const myMaki = countMaki(cards);
       const makiBonus = calculateMakiBonus(myMaki, allMakis);
       return basePoints + makiBonus;
     });
 
     const puddingBonus = calculatePuddingBonus(player.puddings, allPuddings);
-    const totalScore =
-      roundScores.reduce((sum, s) => sum + s, 0) + puddingBonus;
+    const totalScore = roundScores.reduce((sum, s) => sum + s, 0) + puddingBonus;
 
     return { player, roundScores, puddingBonus, totalScore };
   });
@@ -46,7 +48,7 @@ export function TVGameEnd({ players, onPlayAgain }: TVGameEndProps) {
     <div className="tv-view game-end">
       <div className="winner-announcement">
         <span className="winner-emoji">🏆</span>
-        <h1>{winner?.name || "Unknown"} Wins!</h1>
+        <h1>{winner?.name || 'Unknown'} Wins!</h1>
       </div>
       <div className="leaderboard">
         <table className="leaderboard-table">
@@ -65,10 +67,7 @@ export function TVGameEnd({ players, onPlayAgain }: TVGameEndProps) {
           </thead>
           <tbody>
             {leaderboard.map((entry, index) => (
-              <tr
-                key={entry.player.id}
-                className={index === 0 ? "winner" : ""}
-              >
+              <tr key={entry.player.id} className={index === 0 ? 'winner' : ''}>
                 <td className="col-rank">{index + 1}</td>
                 <td className="col-name">{entry.player.name}</td>
                 {entry.roundScores.map((score, i) => (
@@ -78,14 +77,10 @@ export function TVGameEnd({ players, onPlayAgain }: TVGameEndProps) {
                 ))}
                 <td
                   className={`col-pudding ${
-                    entry.puddingBonus > 0
-                      ? "positive"
-                      : entry.puddingBonus < 0
-                      ? "negative"
-                      : ""
+                    entry.puddingBonus > 0 ? 'positive' : entry.puddingBonus < 0 ? 'negative' : ''
                   }`}
                 >
-                  {entry.puddingBonus > 0 ? "+" : ""}
+                  {entry.puddingBonus > 0 ? '+' : ''}
                   {entry.puddingBonus}
                 </td>
                 <td className="col-total">{entry.totalScore}</td>

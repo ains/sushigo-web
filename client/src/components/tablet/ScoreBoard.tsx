@@ -28,7 +28,9 @@ export function ScoreBoard({ players }: ScoreBoardProps) {
             <div key={player.id} className="score-item">
               <span className="position">{index + 1}</span>
               <span className="name">{player.name}</span>
-              <span className="pudding" title="Puddings">🍮 {player.puddings}</span>
+              <span className="pudding" title="Puddings">
+                🍮 {player.puddings}
+              </span>
               <span className="score">{player.score}</span>
             </div>
           ))}

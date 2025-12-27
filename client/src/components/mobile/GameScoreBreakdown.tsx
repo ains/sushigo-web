@@ -1,5 +1,10 @@
 import { PublicPlayer } from '../../types';
-import { scoreRoundCards, countMaki, calculateMakiBonus, calculatePuddingBonus } from 'sushigo-shared';
+import {
+  scoreRoundCards,
+  countMaki,
+  calculateMakiBonus,
+  calculatePuddingBonus,
+} from 'sushigo-shared';
 import './GameScoreBreakdown.css';
 
 interface GameScoreBreakdownProps {
@@ -23,7 +28,7 @@ export function GameScoreBreakdown({
 
   // Calculate total maki per player for each round and sum up bonuses
   const makiBonusPerRound = player.playedCards.map((_, roundIndex) => {
-    const allMakis = allPlayers.map(p => countMaki(p.playedCards[roundIndex] || []));
+    const allMakis = allPlayers.map((p) => countMaki(p.playedCards[roundIndex] || []));
     const myMaki = countMaki(player.playedCards[roundIndex] || []);
     return calculateMakiBonus(myMaki, allMakis);
   });
@@ -32,7 +37,7 @@ export function GameScoreBreakdown({
   const totalRoundPoints = roundScores.reduce((sum, r) => sum + r.points, 0);
 
   // Calculate pudding bonus
-  const allPuddings = allPlayers.map(p => p.puddings);
+  const allPuddings = allPlayers.map((p) => p.puddings);
   const puddingBonus = calculatePuddingBonus(player.puddings, allPuddings);
 
   const calculatedTotal = totalRoundPoints + totalMakiBonus + puddingBonus;
@@ -58,9 +63,7 @@ export function GameScoreBreakdown({
         {roundScores.map((round, index) => (
           <div key={round.round} className="breakdown-row">
             <span className="breakdown-label">Round {round.round}</span>
-            <span className="breakdown-value">
-              {round.points + makiBonusPerRound[index]}
-            </span>
+            <span className="breakdown-value">{round.points + makiBonusPerRound[index]}</span>
           </div>
         ))}
         <div className="breakdown-row subtotal">
@@ -72,11 +75,12 @@ export function GameScoreBreakdown({
       <div className="breakdown-section">
         <h3>End Game Bonuses</h3>
         <div className="breakdown-row">
-          <span className="breakdown-label">
-            🍮 Puddings ({player.puddings})
-          </span>
-          <span className={`breakdown-value ${puddingBonus > 0 ? 'positive' : puddingBonus < 0 ? 'negative' : ''}`}>
-            {puddingBonus > 0 ? '+' : ''}{puddingBonus}
+          <span className="breakdown-label">🍮 Puddings ({player.puddings})</span>
+          <span
+            className={`breakdown-value ${puddingBonus > 0 ? 'positive' : puddingBonus < 0 ? 'negative' : ''}`}
+          >
+            {puddingBonus > 0 ? '+' : ''}
+            {puddingBonus}
           </span>
         </div>
       </div>

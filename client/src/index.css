@@ -17,7 +17,8 @@
   --success: #27ae60;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 }
@@ -126,7 +127,7 @@ body {
 }
 
 /* Input styles */
-input[type="text"] {
+input[type='text'] {
   padding: 12px 16px;
   border: 2px solid var(--surface-light);
   border-radius: 8px;
@@ -137,22 +138,45 @@ input[type="text"] {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus {
+input[type='text']:focus {
   border-color: var(--primary);
 }
 
-input[type="text"]::placeholder {
+input[type='text']::placeholder {
   color: var(--text-muted);
 }
 
 /* Card colors */
-.card-tempura { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-.card-sashimi { background: linear-gradient(135deg, #27ae60, #1e8449); }
-.card-dumpling { background: linear-gradient(135deg, #f1c40f, #d4ac0d); }
-.card-maki1, .card-maki2, .card-maki3 { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-.card-nigiri_egg { background: linear-gradient(135deg, #f39c12, #d68910); }
-.card-nigiri_salmon { background: linear-gradient(135deg, #e67e22, #ca6f1e); }
-.card-nigiri_squid { background: linear-gradient(135deg, #9b59b6, #7d3c98); }
-.card-wasabi { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-.card-pudding { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); color: #333; }
-.card-chopsticks { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+.card-tempura {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+.card-sashimi {
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+}
+.card-dumpling {
+  background: linear-gradient(135deg, #f1c40f, #d4ac0d);
+}
+.card-maki1,
+.card-maki2,
+.card-maki3 {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+.card-nigiri_egg {
+  background: linear-gradient(135deg, #f39c12, #d68910);
+}
+.card-nigiri_salmon {
+  background: linear-gradient(135deg, #e67e22, #ca6f1e);
+}
+.card-nigiri_squid {
+  background: linear-gradient(135deg, #9b59b6, #7d3c98);
+}
+.card-wasabi {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+.card-pudding {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  color: #333;
+}
+.card-chopsticks {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+}

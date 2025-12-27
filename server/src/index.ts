@@ -33,11 +33,12 @@ const LOCAL_IP = getLocalIP();
 // Socket.io setup
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.NODE_ENV === 'production'
-      ? false
-      : ['http://localhost:5173', `http://${LOCAL_IP}:5173`],
-    methods: ['GET', 'POST']
-  }
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? false
+        : ['http://localhost:5173', `http://${LOCAL_IP}:5173`],
+    methods: ['GET', 'POST'],
+  },
 });
 
 // Middleware
@@ -50,7 +51,7 @@ app.get('/api/server-info', (req, res) => {
   res.json({
     ip: LOCAL_IP,
     port: clientPort,
-    url: `http://${LOCAL_IP}:${clientPort}`
+    url: `http://${LOCAL_IP}:${clientPort}`,
   });
 });
 

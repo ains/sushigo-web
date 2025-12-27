@@ -8,14 +8,23 @@ import { RoundInfo } from './RoundInfo';
 import './TabletView.css';
 
 export function TabletView() {
-  const { gameState, gameCode, createGame, startGame, restartGame, finalScores, winner, isConnected } = useGame();
+  const {
+    gameState,
+    gameCode,
+    createGame,
+    startGame,
+    restartGame,
+    finalScores,
+    winner,
+    isConnected,
+  } = useGame();
   const [serverUrl, setServerUrl] = useState<string>('');
 
   useEffect(() => {
     // Get server info for QR code
     fetch('/api/server-info')
-      .then(res => res.json())
-      .then(data => setServerUrl(data.url))
+      .then((res) => res.json())
+      .then((data) => setServerUrl(data.url))
       .catch(() => setServerUrl(window.location.origin));
   }, []);
 
@@ -28,12 +37,12 @@ export function TabletView() {
 
   const phase = gameState?.phase || 'lobby';
   const players = gameState?.players || [];
-  const allSeated = players.length >= 2 && players.every(p => p.seatIndex !== null);
+  const allSeated = players.length >= 2 && players.every((p) => p.seatIndex !== null);
   const canStart = allSeated;
 
   // Game ended
   if (finalScores && winner) {
-    const winnerPlayer = gameState?.players.find(p => p.id === winner);
+    const winnerPlayer = gameState?.players.find((p) => p.id === winner);
     return (
       <div className="tablet-view game-end">
         <h1>Game Over!</h1>
@@ -43,7 +52,7 @@ export function TabletView() {
         </div>
         <div className="final-scores">
           {finalScores.map((score, index) => {
-            const player = gameState?.players.find(p => p.id === score.playerId);
+            const player = gameState?.players.find((p) => p.id === score.playerId);
             return (
               <div key={score.playerId} className={`score-row ${index === 0 ? 'winner' : ''}`}>
                 <span className="rank">{index + 1}</span>
@@ -63,8 +72,8 @@ export function TabletView() {
 
   // Lobby - waiting for players
   if (phase === 'lobby') {
-    const unseatedPlayers = players.filter(p => p.seatIndex === null);
-    const seatedCount = players.filter(p => p.seatIndex !== null).length;
+    const unseatedPlayers = players.filter((p) => p.seatIndex === null);
+    const seatedCount = players.filter((p) => p.seatIndex !== null).length;
 
     return (
       <div className="tablet-view lobby">
@@ -78,13 +87,11 @@ export function TabletView() {
 
         <div className="lobby-content">
           <div className="qr-section">
-            {gameCode && serverUrl && (
-              <QRCodeDisplay code={gameCode} serverUrl={serverUrl} />
-            )}
+            {gameCode && serverUrl && <QRCodeDisplay code={gameCode} serverUrl={serverUrl} />}
             {unseatedPlayers.length > 0 && (
               <div className="unseated-players">
                 <div className="unseated-label">Select a seat:</div>
-                {unseatedPlayers.map(player => (
+                {unseatedPlayers.map((player) => (
                   <div key={player.id} className="unseated-player">
                     {player.name}
                   </div>

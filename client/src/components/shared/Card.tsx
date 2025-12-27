@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
-import { Card as CardType, CardType as CardTypeEnum } from "../../types";
-import "./Card.css";
+import { ReactNode } from 'react';
+import { Card as CardType, CardType as CardTypeEnum } from '../../types';
+import './Card.css';
 
 interface CardProps {
   card: CardType;
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   selected?: boolean;
   onClick?: () => void;
   disabled?: boolean;
@@ -12,33 +12,33 @@ interface CardProps {
 }
 
 const cardNames: Record<CardTypeEnum, string> = {
-  tempura: "Tempura",
-  sashimi: "Sashimi",
-  dumpling: "Dumpling",
-  maki1: "Maki - x1",
-  maki2: "Maki - x2",
-  maki3: "Maki - x3",
-  nigiri_egg: "Egg Nigiri",
-  nigiri_salmon: "Salmon Nigiri",
-  nigiri_squid: "Squid Nigiri",
-  wasabi: "Wasabi",
-  pudding: "Pudding",
-  chopsticks: "Chopsticks",
+  tempura: 'Tempura',
+  sashimi: 'Sashimi',
+  dumpling: 'Dumpling',
+  maki1: 'Maki - x1',
+  maki2: 'Maki - x2',
+  maki3: 'Maki - x3',
+  nigiri_egg: 'Egg Nigiri',
+  nigiri_salmon: 'Salmon Nigiri',
+  nigiri_squid: 'Squid Nigiri',
+  wasabi: 'Wasabi',
+  pudding: 'Pudding',
+  chopsticks: 'Chopsticks',
 };
 
 const cardEmojis: Record<CardTypeEnum, string> = {
-  tempura: "🍤",
-  sashimi: "🍣",
-  dumpling: "🥟",
-  maki1: "🍱",
-  maki2: "🍱🍱",
-  maki3: "🍱🍱🍱",
-  nigiri_egg: "🥚",
-  nigiri_salmon: "🐟",
-  nigiri_squid: "🦑",
-  wasabi: "🌿",
-  pudding: "🍮",
-  chopsticks: "🥢",
+  tempura: '🍤',
+  sashimi: '🍣',
+  dumpling: '🥟',
+  maki1: '🍱',
+  maki2: '🍱🍱',
+  maki3: '🍱🍱🍱',
+  nigiri_egg: '🥚',
+  nigiri_salmon: '🐟',
+  nigiri_squid: '🦑',
+  wasabi: '🌿',
+  pudding: '🍮',
+  chopsticks: '🥢',
 };
 
 const cardPoints: Record<CardTypeEnum, ReactNode> = {
@@ -116,7 +116,7 @@ const cardPoints: Record<CardTypeEnum, ReactNode> = {
 
 export function Card({
   card,
-  size = "medium",
+  size = 'medium',
   selected = false,
   onClick,
   disabled = false,
@@ -125,10 +125,8 @@ export function Card({
   return (
     <div
       className={`card card-${card.type} card-${size} ${
-        selected ? "selected" : ""
-      } ${onClick && !disabled ? "clickable" : ""} ${
-        disabled ? "disabled" : ""
-      }`}
+        selected ? 'selected' : ''
+      } ${onClick && !disabled ? 'clickable' : ''} ${disabled ? 'disabled' : ''}`}
       onClick={!disabled ? onClick : undefined}
     >
       <div className="card-emoji">{cardEmojis[card.type]}</div>
@@ -139,11 +137,7 @@ export function Card({
   );
 }
 
-export function CardBack({
-  size = "medium",
-}: {
-  size?: "small" | "medium" | "large";
-}) {
+export function CardBack({ size = 'medium' }: { size?: 'small' | 'medium' | 'large' }) {
   return (
     <div className={`card card-back card-${size}`}>
       <div className="card-emoji">🍱</div>

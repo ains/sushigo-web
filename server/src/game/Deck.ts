@@ -17,7 +17,7 @@ export class Deck {
       for (let i = 0; i < count; i++) {
         this.cards.push({
           id: `card_${this.nextId++}`,
-          type: cardType as CardType
+          type: cardType as CardType,
         });
       }
     }

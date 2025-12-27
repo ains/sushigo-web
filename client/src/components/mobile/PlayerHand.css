@@ -108,7 +108,9 @@
 
 /* Card wrapper for animations */
 .card-wrapper {
-  transition: transform 0.2s, opacity 0.2s;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 /* Flying animation for cards being passed */
@@ -194,13 +196,33 @@
 }
 
 /* Stagger the animation for each card */
-.card-wrapper:nth-child(1) { animation-delay: 0ms; }
-.card-wrapper:nth-child(2) { animation-delay: 50ms; }
-.card-wrapper:nth-child(3) { animation-delay: 100ms; }
-.card-wrapper:nth-child(4) { animation-delay: 150ms; }
-.card-wrapper:nth-child(5) { animation-delay: 200ms; }
-.card-wrapper:nth-child(6) { animation-delay: 250ms; }
-.card-wrapper:nth-child(7) { animation-delay: 300ms; }
-.card-wrapper:nth-child(8) { animation-delay: 350ms; }
-.card-wrapper:nth-child(9) { animation-delay: 400ms; }
-.card-wrapper:nth-child(10) { animation-delay: 450ms; }
+.card-wrapper:nth-child(1) {
+  animation-delay: 0ms;
+}
+.card-wrapper:nth-child(2) {
+  animation-delay: 50ms;
+}
+.card-wrapper:nth-child(3) {
+  animation-delay: 100ms;
+}
+.card-wrapper:nth-child(4) {
+  animation-delay: 150ms;
+}
+.card-wrapper:nth-child(5) {
+  animation-delay: 200ms;
+}
+.card-wrapper:nth-child(6) {
+  animation-delay: 250ms;
+}
+.card-wrapper:nth-child(7) {
+  animation-delay: 300ms;
+}
+.card-wrapper:nth-child(8) {
+  animation-delay: 350ms;
+}
+.card-wrapper:nth-child(9) {
+  animation-delay: 400ms;
+}
+.card-wrapper:nth-child(10) {
+  animation-delay: 450ms;
+}

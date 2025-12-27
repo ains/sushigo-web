@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useGame } from "../../context/GameContext";
-import { QRCodeDisplay } from "../tablet/QRCodeDisplay";
-import { SeatLayout } from "../tablet/SeatLayout";
-import { TVGameBoard } from "./TVGameBoard";
-import { TVGameEnd } from "./TVGameEnd";
-import "./TVView.css";
+import { useEffect, useState } from 'react';
+import { useGame } from '../../context/GameContext';
+import { QRCodeDisplay } from '../tablet/QRCodeDisplay';
+import { SeatLayout } from '../tablet/SeatLayout';
+import { TVGameBoard } from './TVGameBoard';
+import { TVGameEnd } from './TVGameEnd';
+import './TVView.css';
 
 export function TVView() {
   const {
@@ -17,11 +17,11 @@ export function TVView() {
     winner,
     isConnected,
   } = useGame();
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [serverUrl, setServerUrl] = useState<string>('');
 
   useEffect(() => {
     // Get server info for QR code
-    fetch("/api/server-info")
+    fetch('/api/server-info')
       .then((res) => res.json())
       .then((data) => setServerUrl(data.url))
       .catch(() => setServerUrl(window.location.origin));
@@ -34,25 +34,24 @@ export function TVView() {
     }
   }, [isConnected, gameCode, gameState, createGame]);
 
-  const phase = gameState?.phase || "lobby";
+  const phase = gameState?.phase || 'lobby';
   const players = gameState?.players || [];
-  const allSeated =
-    players.length >= 2 && players.every((p) => p.seatIndex !== null);
+  const allSeated = players.length >= 2 && players.every((p) => p.seatIndex !== null);
   const canStart = allSeated;
 
   // Spacebar to start game in lobby
   useEffect(() => {
-    if (phase !== "lobby" || !canStart) return;
+    if (phase !== 'lobby' || !canStart) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
+      if (e.code === 'Space') {
         e.preventDefault();
         startGame();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [phase, canStart, startGame]);
 
   // Game ended
@@ -61,7 +60,7 @@ export function TVView() {
   }
 
   // Lobby - waiting for players
-  if (phase === "lobby") {
+  if (phase === 'lobby') {
     const unseatedPlayers = players.filter((p) => p.seatIndex === null);
     const seatedCount = players.filter((p) => p.seatIndex !== null).length;
 
@@ -70,16 +69,14 @@ export function TVView() {
         <div className="lobby-header">
           <h1>Sushi Go!</h1>
           <div className="lobby-status">
-            {players.length} player{players.length !== 1 ? "s" : ""} joined
+            {players.length} player{players.length !== 1 ? 's' : ''} joined
             {seatedCount > 0 && ` • ${seatedCount} seated`}
           </div>
         </div>
 
         <div className="lobby-content">
           <div className="qr-section">
-            {gameCode && serverUrl && (
-              <QRCodeDisplay code={gameCode} serverUrl={serverUrl} />
-            )}
+            {gameCode && serverUrl && <QRCodeDisplay code={gameCode} serverUrl={serverUrl} />}
             {unseatedPlayers.length > 0 && (
               <div className="unseated-players">
                 <div className="unseated-label">Select a seat:</div>
@@ -100,10 +97,10 @@ export function TVView() {
               onClick={startGame}
             >
               {players.length < 2
-                ? "Need at least 2 players"
+                ? 'Need at least 2 players'
                 : !allSeated
-                ? "All players must select a seat"
-                : "Start Game (Space)"}
+                  ? 'All players must select a seat'
+                  : 'Start Game (Space)'}
             </button>
           </div>
         </div>
@@ -120,7 +117,7 @@ export function TVView() {
         currentTurn={gameState?.currentTurn || 1}
         phase={phase}
       />
-      {phase === "round_end" && (
+      {phase === 'round_end' && (
         <div className="round-end-overlay">
           <h2>Round {gameState?.currentRound} Complete!</h2>
           <p>Next round starting soon...</p>

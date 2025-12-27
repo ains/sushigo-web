@@ -21,9 +21,11 @@ function CardGroupDisplay({ group }: { group: CardGroup }) {
   const isUnused = group.type === 'unused_wasabi';
 
   return (
-    <div className={`card-group card-group-${group.type} ${isIncomplete ? 'incomplete' : ''} ${isUnused ? 'unused' : ''}`}>
+    <div
+      className={`card-group card-group-${group.type} ${isIncomplete ? 'incomplete' : ''} ${isUnused ? 'unused' : ''}`}
+    >
       <div className="card-group-cards">
-        {group.cards.map(card => (
+        {group.cards.map((card) => (
           <Card key={card.id} card={card} size="small" showPoints={false} />
         ))}
       </div>
@@ -52,9 +54,7 @@ function PlayerBoard({ player, currentRound }: PlayerBoardProps) {
         {cardGroups.map((group, index) => (
           <CardGroupDisplay key={`${group.type}-${index}`} group={group} />
         ))}
-        {cardGroups.length === 0 && (
-          <div className="no-cards">No cards played yet</div>
-        )}
+        {cardGroups.length === 0 && <div className="no-cards">No cards played yet</div>}
       </div>
     </div>
   );
@@ -86,7 +86,7 @@ export function TVGameBoard({ players, currentRound, currentTurn, phase }: TVGam
         </div>
       </div>
       <div className="tv-game-board">
-        {sortedPlayers.map(player => (
+        {sortedPlayers.map((player) => (
           <PlayerBoard key={player.id} player={player} currentRound={currentRound} />
         ))}
       </div>

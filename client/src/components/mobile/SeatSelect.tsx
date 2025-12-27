@@ -8,7 +8,7 @@ interface SeatSelectProps {
 
 export function SeatSelect({ players, onSelectSeat }: SeatSelectProps) {
   const getPlayerAtSeat = (seatIndex: number): PublicPlayer | undefined => {
-    return players.find(p => p.seatIndex === seatIndex);
+    return players.find((p) => p.seatIndex === seatIndex);
   };
 
   const renderSeat = (seatIndex: number) => {
