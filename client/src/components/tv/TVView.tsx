@@ -40,6 +40,21 @@ export function TVView() {
     players.length >= 2 && players.every((p) => p.seatIndex !== null);
   const canStart = allSeated;
 
+  // Spacebar to start game in lobby
+  useEffect(() => {
+    if (phase !== "lobby" || !canStart) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        startGame();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [phase, canStart, startGame]);
+
   // Game ended
   if (finalScores && winner && gameState) {
     return <TVGameEnd players={gameState.players} onPlayAgain={restartGame} />;
@@ -88,7 +103,7 @@ export function TVView() {
                 ? "Need at least 2 players"
                 : !allSeated
                 ? "All players must select a seat"
-                : "Start Game"}
+                : "Start Game (Space)"}
             </button>
           </div>
         </div>
