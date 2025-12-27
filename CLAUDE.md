@@ -99,6 +99,7 @@ The app is configured for Render deployment via `render.yaml`:
 3. Deploy
 
 **Environment variables** (set automatically by render.yaml):
+
 - `NODE_ENV=production` - Enables static file serving
 - `PORT` - Set automatically by Render
 
@@ -113,6 +114,7 @@ NODE_ENV=production npm start
 ## CI/CD
 
 GitHub Actions runs on push/PR to main (`.github/workflows/ci.yml`):
+
 - Formatting check (Prettier)
 - Tests
 - Build
