@@ -172,7 +172,12 @@ function DebugTVView({ view }: { view: ViewType }) {
   return (
     <div className="debug-tv-container">
       <div className="debug-info">Debug: {view} (TV View)</div>
-      <TVGameBoard players={gameState.players} currentRound={gameState.currentRound} />
+      <TVGameBoard
+        players={gameState.players}
+        currentRound={gameState.currentRound}
+        currentTurn={gameState.currentTurn}
+        phase={gameState.phase}
+      />
       {view === 'round-end' && (
         <div className="round-end-overlay">
           <h2>Round {gameState.currentRound} Complete!</h2>

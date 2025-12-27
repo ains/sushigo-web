@@ -1,3 +1,86 @@
+/* TV Board container */
+.tv-board-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Scoreboard header */
+.tv-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--surface-light);
+}
+
+.scoreboard-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.scoreboard-round {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.scoreboard-turn {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.scoreboard-phase {
+  font-size: 16px;
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+.scoreboard-players {
+  display: flex;
+  gap: 24px;
+}
+
+.scoreboard-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-light);
+  border-radius: 8px;
+}
+
+.scoreboard-player.leading {
+  background: var(--secondary);
+  color: white;
+}
+
+.scoreboard-name {
+  font-weight: 500;
+}
+
+.scoreboard-score {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.scoreboard-player.leading .scoreboard-score {
+  color: white;
+}
+
+.scoreboard-puddings {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.scoreboard-player.leading .scoreboard-puddings {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Game board grid */
 .tv-game-board {
   flex: 1;
   display: grid;

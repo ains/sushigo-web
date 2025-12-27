@@ -7,6 +7,8 @@ import './TVGameBoard.css';
 interface TVGameBoardProps {
   players: PublicPlayer[];
   currentRound: number;
+  currentTurn: number;
+  phase: string;
 }
 
 interface PlayerBoardProps {
@@ -58,16 +60,36 @@ function PlayerBoard({ player, currentRound }: PlayerBoardProps) {
   );
 }
 
-export function TVGameBoard({ players, currentRound }: TVGameBoardProps) {
+export function TVGameBoard({ players, currentRound, currentTurn, phase }: TVGameBoardProps) {
   // Display all players in a grid without rotation
   // Sort by seat index for consistent ordering
   const sortedPlayers = [...players].sort((a, b) => (a.seatIndex ?? 0) - (b.seatIndex ?? 0));
+  // Sort by score for the scoreboard (highest first)
+  const rankedPlayers = [...players].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="tv-game-board">
-      {sortedPlayers.map(player => (
-        <PlayerBoard key={player.id} player={player} currentRound={currentRound} />
-      ))}
+    <div className="tv-board-container">
+      <div className="tv-scoreboard">
+        <div className="scoreboard-info">
+          <span className="scoreboard-round">Round {currentRound}/3</span>
+          {phase === 'playing' && <span className="scoreboard-turn">Turn {currentTurn}</span>}
+          {phase === 'round_end' && <span className="scoreboard-phase">Round Complete</span>}
+        </div>
+        <div className="scoreboard-players">
+          {rankedPlayers.map((player, index) => (
+            <div key={player.id} className={`scoreboard-player ${index === 0 ? 'leading' : ''}`}>
+              <span className="scoreboard-name">{player.name}</span>
+              <span className="scoreboard-score">{player.score}</span>
+              <span className="scoreboard-puddings">🍮 {player.puddings}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="tv-game-board">
+        {sortedPlayers.map(player => (
+          <PlayerBoard key={player.id} player={player} currentRound={currentRound} />
+        ))}
+      </div>
     </div>
   );
 }

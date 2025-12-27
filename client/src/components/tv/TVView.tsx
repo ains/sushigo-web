@@ -3,8 +3,6 @@ import { useGame } from "../../context/GameContext";
 import { QRCodeDisplay } from "../tablet/QRCodeDisplay";
 import { SeatLayout } from "../tablet/SeatLayout";
 import { TVGameBoard } from "./TVGameBoard";
-import { ScoreBoard } from "../tablet/ScoreBoard";
-import { RoundInfo } from "../tablet/RoundInfo";
 import "./TVView.css";
 
 export function TVView() {
@@ -130,22 +128,16 @@ export function TVView() {
   // Playing or round end
   return (
     <div className="tv-view playing">
-      <div className="game-header">
-        <RoundInfo
-          round={gameState?.currentRound || 1}
-          turn={gameState?.currentTurn || 1}
-          phase={phase}
-        />
-        <ScoreBoard players={players} />
-      </div>
       <TVGameBoard
         players={players}
         currentRound={gameState?.currentRound || 1}
+        currentTurn={gameState?.currentTurn || 1}
+        phase={phase}
       />
       {phase === "round_end" && (
         <div className="round-end-overlay">
           <h2>Round {gameState?.currentRound} Complete!</h2>
-          <p>Next round starting in 10seconds...</p>
+          <p>Next round starting soon...</p>
         </div>
       )}
     </div>
