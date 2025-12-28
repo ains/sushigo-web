@@ -17,6 +17,17 @@ import {
   type PlayerPuddingData,
 } from 'sushigo-shared';
 
+// Result type for operations that can fail
+export type Result<T, E = string> = { ok: true; value: T } | { ok: false; error: E };
+
+export function ok<T>(value: T): Result<T, never> {
+  return { ok: true, value };
+}
+
+export function err<E>(error: E): Result<never, E> {
+  return { ok: false, error };
+}
+
 export class Game {
   private state: GameState;
   private deck: Deck;
@@ -38,18 +49,18 @@ export class Game {
   }
 
   // Add a player to the game
-  addPlayer(socketId: string, name: string): Player | null {
+  addPlayer(socketId: string, name: string): Result<Player> {
     if (this.state.phase !== 'lobby') {
-      return null;
+      return err('Game has already started');
     }
 
     if (this.state.players.length >= this.state.maxPlayers) {
-      return null;
+      return err(`Game is full (maximum ${this.state.maxPlayers} players)`);
     }
 
     // Check for duplicate names
     if (this.state.players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
-      return null;
+      return err(`The name "${name}" is already taken`);
     }
 
     const player: Player = {
@@ -67,7 +78,7 @@ export class Game {
     };
 
     this.state.players.push(player);
-    return player;
+    return ok(player);
   }
 
   // Remove a player from the game

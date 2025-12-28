@@ -26,10 +26,10 @@ export function setupSocketHandlers(io: GameServer): void {
     // Create and join a new game (remote play - host is also a player)
     socket.on('game:createAndJoin', ({ name }) => {
       const game = gameManager.createGame(socket.id);
-      const player = game.addPlayer(socket.id, name);
+      const result = game.addPlayer(socket.id, name);
 
-      if (!player) {
-        socket.emit('game:error', { message: 'Failed to create game' });
+      if (!result.ok) {
+        socket.emit('game:error', { message: result.error });
         return;
       }
 
@@ -39,7 +39,7 @@ export function setupSocketHandlers(io: GameServer): void {
         gameCode: game.code,
         gameId: game.id,
         gameState: game.getPublicState(),
-        playerId: player.id,
+        playerId: result.value.id,
       });
 
       console.log(`Game created and joined: ${game.code} by ${name}`);
@@ -54,12 +54,10 @@ export function setupSocketHandlers(io: GameServer): void {
         return;
       }
 
-      const player = game.addPlayer(socket.id, name);
+      const result = game.addPlayer(socket.id, name);
 
-      if (!player) {
-        socket.emit('game:error', {
-          message: 'Unable to join game. It may be full or already started.',
-        });
+      if (!result.ok) {
+        socket.emit('game:error', { message: result.error });
         return;
       }
 
@@ -67,7 +65,7 @@ export function setupSocketHandlers(io: GameServer): void {
 
       // Notify all players in the game
       const publicState = game.getPublicState();
-      const publicPlayer = publicState.players.find((p) => p.id === player.id)!;
+      const publicPlayer = publicState.players.find((p) => p.id === result.value.id)!;
 
       io.to(game.id).emit('player:joined', {
         player: publicPlayer,
