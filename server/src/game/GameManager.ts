@@ -72,6 +72,12 @@ export class GameManager {
       }
     }
   }
+
+  // Reset all state (for testing)
+  reset(): void {
+    this.games.clear();
+    this.codeToGameId.clear();
+  }
 }
 
 // Singleton instance

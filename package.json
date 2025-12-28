@@ -16,7 +16,7 @@
     "build:server": "npm run build -w server",
     "build:client": "npm run build -w client",
     "start": "npm start -w server",
-    "test": "npm run test -w shared",
+    "test": "npm run test -w shared && npm run test -w server",
     "test:watch": "npm run test:watch -w shared",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
