@@ -23,28 +23,6 @@ export function setupSocketHandlers(io: GameServer): void {
       console.log(`Game created: ${game.code} by ${socket.id}`);
     });
 
-    // Create and join a new game (remote play - host is also a player)
-    socket.on('game:createAndJoin', ({ name }) => {
-      const game = gameManager.createGame(socket.id);
-      const result = game.addPlayer(socket.id, name);
-
-      if (!result.ok) {
-        socket.emit('game:error', { message: result.error });
-        return;
-      }
-
-      socket.join(game.id);
-
-      socket.emit('game:createdAndJoined', {
-        gameCode: game.code,
-        gameId: game.id,
-        gameState: game.getPublicState(),
-        playerId: result.value.id,
-      });
-
-      console.log(`Game created and joined: ${game.code} by ${name}`);
-    });
-
     // Join an existing game (mobile/player)
     socket.on('game:join', ({ code, name }) => {
       const game = gameManager.getGameByCode(code);

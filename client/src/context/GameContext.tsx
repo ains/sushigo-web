@@ -62,6 +62,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
   const myPlayerIdRef = useRef<string | null>(null);
+  const pendingJoinNameRef = useRef<string | null>(null);
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -95,14 +96,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     newSocket.on('game:created', ({ gameCode: code, gameState: state }) => {
       setGameCode(code);
       setGameState(state);
-    });
 
-    newSocket.on('game:createdAndJoined', ({ gameCode: code, gameState: state, playerId }) => {
-      setGameCode(code);
-      setGameState(state);
-      setMyPlayerId(playerId);
-      myPlayerIdRef.current = playerId;
-      setIsHost(true);
+      // If there's a pending join (from createAndJoinGame), join now
+      if (pendingJoinNameRef.current) {
+        const name = pendingJoinNameRef.current;
+        pendingJoinNameRef.current = null;
+        setIsHost(true);
+        newSocket.emit('game:join', { code, name });
+      }
     });
 
     newSocket.on('game:error', ({ message }) => {
@@ -182,7 +183,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const createAndJoinGame = useCallback(
     (name: string) => {
-      socket?.emit('game:createAndJoin', { name });
+      pendingJoinNameRef.current = name;
+      socket?.emit('game:create');
     },
     [socket]
   );
