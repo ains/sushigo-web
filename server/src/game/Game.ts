@@ -82,9 +82,11 @@ export class Game {
   }
 
   // Remove a player from the game
-  removePlayer(socketId: string): boolean {
+  removePlayer(socketId: string): Result<void> {
     const index = this.state.players.findIndex((p) => p.socketId === socketId);
-    if (index === -1) return false;
+    if (index === -1) {
+      return err('Player not found');
+    }
 
     if (this.state.phase === 'lobby') {
       this.state.players.splice(index, 1);
@@ -92,35 +94,45 @@ export class Game {
       // During game, mark as disconnected
       this.state.players[index].isConnected = false;
     }
-    return true;
+    return ok(undefined);
   }
 
   // Reconnect a player
-  reconnectPlayer(playerId: string, newSocketId: string): boolean {
+  reconnectPlayer(playerId: string, newSocketId: string): Result<Player> {
     const player = this.state.players.find((p) => p.id === playerId);
-    if (!player) return false;
+    if (!player) {
+      return err('Player not found');
+    }
 
     player.socketId = newSocketId;
     player.isConnected = true;
-    return true;
+    return ok(player);
   }
 
   // Select a seat for a player
-  selectSeat(socketId: string, seatIndex: number): boolean {
-    if (this.state.phase !== 'lobby') return false;
-    if (seatIndex < 0 || seatIndex > 3) return false;
+  selectSeat(socketId: string, seatIndex: number): Result<void> {
+    if (this.state.phase !== 'lobby') {
+      return err('Cannot change seats after the game has started');
+    }
+    if (seatIndex < 0 || seatIndex > 3) {
+      return err('Invalid seat index');
+    }
 
     const player = this.getPlayerBySocket(socketId);
-    if (!player) return false;
+    if (!player) {
+      return err('Player not found');
+    }
 
     // Check if seat is already taken by another player
-    const seatTaken = this.state.players.some(
+    const existingPlayer = this.state.players.find(
       (p) => p.id !== player.id && p.seatIndex === seatIndex
     );
-    if (seatTaken) return false;
+    if (existingPlayer) {
+      return err(`Seat is already taken by ${existingPlayer.name}`);
+    }
 
     player.seatIndex = seatIndex;
-    return true;
+    return ok(undefined);
   }
 
   // Check if all players are seated
@@ -128,17 +140,19 @@ export class Game {
     return this.state.players.every((p) => p.seatIndex !== null);
   }
 
-  // Start the game - returns error message or null on success
-  start(): string | null {
+  // Start the game
+  start(): Result<void> {
     if (this.state.phase !== 'lobby') {
-      return 'The game has already started';
+      return err('The game has already started');
     }
     if (this.state.players.length < 2) {
-      return `Need at least 2 players (currently ${this.state.players.length})`;
+      return err(`Need at least 2 players (currently ${this.state.players.length})`);
     }
     if (!this.allPlayersSeated()) {
       const unseated = this.state.players.filter((p) => p.seatIndex === null);
-      return `All players must be seated (${unseated.map((p) => p.name).join(', ')} not seated)`;
+      return err(
+        `All players must be seated (${unseated.map((p) => p.name).join(', ')} not seated)`
+      );
     }
 
     this.state.phase = 'playing';
@@ -147,7 +161,7 @@ export class Game {
     this.state.cardsPerHand = CARDS_PER_PLAYER[this.state.players.length] || 8;
 
     this.startRound();
-    return null;
+    return ok(undefined);
   }
 
   // Update host socket ID (for reconnection)
@@ -176,36 +190,56 @@ export class Game {
   }
 
   // Player selects card(s)
-  selectCards(socketId: string, cardIds: string[]): boolean {
+  selectCards(socketId: string, cardIds: string[]): Result<Card[]> {
     const player = this.getPlayerBySocket(socketId);
-    if (!player) return false;
-    if (this.state.phase !== 'playing') return false;
+    if (!player) {
+      return err('Player not found');
+    }
+    if (this.state.phase !== 'playing') {
+      return err('Game is not in progress');
+    }
+
+    if (cardIds.length === 0) {
+      return err('No cards selected');
+    }
 
     // Validate cards are in player's hand
     const selectedCards = player.hand.filter((c) => cardIds.includes(c.id));
-    if (selectedCards.length !== cardIds.length) return false;
+    if (selectedCards.length !== cardIds.length) {
+      return err('One or more selected cards are not in your hand');
+    }
 
     // Check if using chopsticks (can select 2 cards)
     const hasChopsticks = player.playedCards[this.state.currentRound - 1].some(
       (c) => c.type === 'chopsticks'
     );
 
-    if (cardIds.length === 2 && !hasChopsticks) return false;
-    if (cardIds.length > 2) return false;
-    if (cardIds.length === 0) return false;
+    if (cardIds.length > 2) {
+      return err('Cannot select more than 2 cards');
+    }
+    if (cardIds.length === 2 && !hasChopsticks) {
+      return err('You need chopsticks to select 2 cards');
+    }
 
     player.selectedCards = selectedCards;
-    return true;
+    return ok(selectedCards);
   }
 
   // Player confirms their selection
-  confirmSelection(socketId: string): boolean {
+  confirmSelection(socketId: string): Result<void> {
     const player = this.getPlayerBySocket(socketId);
-    if (!player) return false;
-    if (player.selectedCards.length === 0) return false;
+    if (!player) {
+      return err('Player not found');
+    }
+    if (player.selectedCards.length === 0) {
+      return err('No cards selected');
+    }
+    if (player.hasConfirmed) {
+      return err('Selection already confirmed');
+    }
 
     player.hasConfirmed = true;
-    return true;
+    return ok(undefined);
   }
 
   // Check if all players have confirmed

@@ -82,8 +82,9 @@ export function setupSocketHandlers(io: GameServer): void {
         return;
       }
 
-      if (!game.selectSeat(socket.id, seatIndex)) {
-        socket.emit('game:error', { message: 'Cannot select that seat' });
+      const result = game.selectSeat(socket.id, seatIndex);
+      if (!result.ok) {
+        socket.emit('game:error', { message: result.error });
         return;
       }
 
@@ -117,9 +118,9 @@ export function setupSocketHandlers(io: GameServer): void {
         }
       }
 
-      const error = game.start();
-      if (error) {
-        socket.emit('game:error', { message: error });
+      const result = game.start();
+      if (!result.ok) {
+        socket.emit('game:error', { message: result.error });
         return;
       }
 
@@ -143,9 +144,9 @@ export function setupSocketHandlers(io: GameServer): void {
       const game = gameManager.getGameBySocket(socket.id);
       if (!game) return;
 
-      const success = game.selectCards(socket.id, cardIds);
-      if (!success) {
-        socket.emit('game:error', { message: 'Invalid card selection' });
+      const result = game.selectCards(socket.id, cardIds);
+      if (!result.ok) {
+        socket.emit('game:error', { message: result.error });
       }
     });
 
@@ -157,10 +158,9 @@ export function setupSocketHandlers(io: GameServer): void {
       const player = game.getPlayerBySocket(socket.id);
       if (!player) return;
 
-      if (!game.confirmSelection(socket.id)) {
-        socket.emit('game:error', {
-          message: 'Cannot confirm. No cards selected.',
-        });
+      const confirmResult = game.confirmSelection(socket.id);
+      if (!confirmResult.ok) {
+        socket.emit('game:error', { message: confirmResult.error });
         return;
       }
 
